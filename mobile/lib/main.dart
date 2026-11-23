@@ -24,7 +24,8 @@ final dioProvider = Provider<Dio>((ref) {
 });
 
 final healthProvider = FutureProvider<Map<String, dynamic>>((ref) async {
-  final response = await ref.read(dioProvider).get<Map<String, dynamic>>('/health');
+  final response =
+      await ref.read(dioProvider).get<Map<String, dynamic>>('/health');
   return response.data ?? <String, dynamic>{};
 });
 
