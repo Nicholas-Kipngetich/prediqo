@@ -1,0 +1,14 @@
+# Let Git normalise line endings in the repository; working trees use native endings.
+* text=auto
+
+# Explicit binary assets
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.jar binary
+*.p12 binary
+*.jks binary
+*.woff binary
+*.woff2 binary
