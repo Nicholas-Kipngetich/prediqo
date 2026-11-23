@@ -35,7 +35,7 @@ jobs:
         run: flutter create . --project-name prediqo --org com.prediqo --platforms android
 
       - name: Provide Firebase Android config
-        run: cp android/app/google-services.example.json android/app/google-services.json
+        run: cp firebase/google-services.example.json android/app/google-services.json
 
       - name: Disable release lint task
         # AGP 8 lint crashes while analysing firebase_core sources on this runner.
