@@ -1,0 +1,125 @@
+name: prediqo
+
+# Portable production-style stack for a self-hosted Linux VPS.
+# Requires a .env file next to this file (see documentation/deployment/16-hosting.md).
+# Keep secrets out of version control; only .env.example is committed.
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-prediqo}
+      POSTGRES_USER: ${POSTGRES_USER:-prediqo}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-prediqo} -d ${POSTGRES_DB:-prediqo}"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+    # No host port published: reachable only inside the compose network.
+    networks: [prediqo]
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+    networks: [prediqo]
+
+  backend:
+    build:
+      context: ../../
+      dockerfile: backend/Dockerfile
+    restart: unless-stopped
+    env_file:
+      - ../../.env
+    environment:
+      ENVIRONMENT: production
+      AUTH_MODE: firebase
+      ALLOW_SAMPLE_DATA: "false"
+      FOOTBALL_DATA_PROVIDER: ${FOOTBALL_DATA_PROVIDER:?FOOTBALL_DATA_PROVIDER is required}
+      POSTGRES_HOST: postgres
+      REDIS_HOST: redis
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:8000:8000"
+    networks: [prediqo]
+
+  celery-worker:
+    build:
+      context: ../../
+      dockerfile: backend/Dockerfile
+    restart: unless-stopped
+    env_file:
+      - ../../.env
+    environment:
+      ENVIRONMENT: production
+      AUTH_MODE: firebase
+      POSTGRES_HOST: postgres
+      REDIS_HOST: redis
+    command: ["celery", "-A", "app.core.celery_app:celery_app", "worker", "--loglevel=info"]
+    depends_on: [backend]
+    networks: [prediqo]
+
+  celery-beat:
+    build:
+      context: ../../
+      dockerfile: backend/Dockerfile
+    restart: unless-stopped
+    env_file:
+      - ../../.env
+    environment:
+      ENVIRONMENT: production
+      AUTH_MODE: firebase
+      POSTGRES_HOST: postgres
+      REDIS_HOST: redis
+    command: ["celery", "-A", "app.core.celery_app:celery_app", "beat", "--loglevel=info"]
+    depends_on: [backend]
+    networks: [prediqo]
+
+  admin-dashboard:
+    build:
+      context: ../../admin-dashboard
+    restart: unless-stopped
+    environment:
+      NEXT_PUBLIC_API_URL: ${ADMIN_API_URL:-https://api.prediqo.app}
+    ports:
+      - "127.0.0.1:3000:3000"
+    depends_on: [backend]
+    networks: [prediqo]
+
+  mlflow:
+    image: ghcr.io/mlflow/mlflow:v2.16.0
+    restart: unless-stopped
+    profiles: ["ml"]
+    command: >
+      mlflow server --host 0.0.0.0 --port 5000
+      --backend-store-uri sqlite:////mlflow/mlflow.db
+      --default-artifact-root /mlflow/artifacts
+    ports:
+      - "127.0.0.1:5000:5000"
+    volumes:
+      - mlflow_data:/mlflow
+    networks: [prediqo]
+
+volumes:
+  postgres_data:
+  redis_data:
+  mlflow_data:
+
+networks:
+  prediqo:
+    driver: bridge
