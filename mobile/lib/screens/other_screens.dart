@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../core/auth_service.dart';
 import '../state/providers.dart';
 import '../theme/app_theme.dart';
 import '../widgets/app_scaffold.dart';
@@ -176,9 +177,61 @@ class ProfileScreen extends ConsumerWidget {
             'Notifications',
             '/notifications',
           ),
+          ListTile(
+            leading: const Icon(Icons.logout, color: AppColors.textSecondary),
+            title: const Text('Sign out'),
+            onTap: () async {
+              await ref.read(authServiceProvider).signOut();
+              ref.invalidate(currentUserProvider);
+              if (context.mounted) context.go('/auth');
+            },
+          ),
+          const SizedBox(height: 16),
+          ListTile(
+            leading: const Icon(Icons.delete_outline, color: AppColors.warning),
+            title: const Text('Delete account'),
+            subtitle: const Text('Removes your personal data'),
+            onTap: () => _confirmDelete(context, ref),
+          ),
         ],
       ),
     );
+  }
+
+  Future<void> _confirmDelete(BuildContext context, WidgetRef ref) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Delete account?'),
+        content: const Text(
+          'Your personal data will be removed. Historical predictions are '
+          'retained anonymously for integrity.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true) return;
+    try {
+      await ref.read(authServiceProvider).deleteAccount();
+      await ref.read(fixturesRepositoryProvider).deleteAccount();
+      ref.invalidate(currentUserProvider);
+      if (context.mounted) context.go('/auth');
+    } catch (error) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Delete failed: $error')));
+      }
+    }
   }
 
   Widget _tile(

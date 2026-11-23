@@ -1,18 +1,20 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../core/auth_service.dart';
 import '../theme/app_theme.dart';
 
-class SplashScreen extends StatefulWidget {
+class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
 
   @override
-  State<SplashScreen> createState() => _SplashScreenState();
+  ConsumerState<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
+class _SplashScreenState extends ConsumerState<SplashScreen> {
   Timer? _timer;
 
   @override
@@ -29,7 +31,13 @@ class _SplashScreenState extends State<SplashScreen> {
 
   void _continue() {
     if (!mounted) return;
-    context.go('/home');
+    bool signedIn = false;
+    try {
+      signedIn = ref.read(authServiceProvider).isSignedIn;
+    } catch (_) {
+      // Firebase unavailable in local tests.
+    }
+    context.go(signedIn ? '/home' : '/auth');
   }
 
   @override

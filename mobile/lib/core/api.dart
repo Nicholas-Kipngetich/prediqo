@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../data/models.dart';
+import 'auth_service.dart';
 
 const apiBaseUrl = String.fromEnvironment(
   'API_BASE_URL',
@@ -14,15 +15,37 @@ const devAuthToken = String.fromEnvironment(
 );
 
 final dioProvider = Provider<Dio>((ref) {
-  return Dio(
+  final dio = Dio(
     BaseOptions(
       baseUrl: apiBaseUrl,
       connectTimeout: const Duration(seconds: 8),
       receiveTimeout: const Duration(seconds: 8),
-      headers: {'Authorization': 'Bearer $devAuthToken'},
     ),
   );
+  dio.interceptors.add(_AuthInterceptor(ref));
+  return dio;
 });
+
+class _AuthInterceptor extends Interceptor {
+  _AuthInterceptor(this._ref);
+
+  final Ref _ref;
+
+  @override
+  Future<void> onRequest(
+    RequestOptions options,
+    RequestInterceptorHandler handler,
+  ) async {
+    var token = devAuthToken;
+    try {
+      token = await _ref.read(authServiceProvider).idToken() ?? devAuthToken;
+    } catch (_) {
+      // Firebase is not initialised in local widget tests; use the dev token.
+    }
+    options.headers['Authorization'] = 'Bearer $token';
+    handler.next(options);
+  }
+}
 
 final fixturesRepositoryProvider = Provider<FixturesRepository>((ref) {
   return FixturesRepository(ref.watch(dioProvider));
@@ -119,6 +142,10 @@ class FixturesRepository {
       '/api/v1/performance/overview',
     );
     return PerformanceOverview.fromJson(response.data ?? {});
+  }
+
+  Future<void> deleteAccount() async {
+    await _dio.delete<void>('/api/v1/users/me');
   }
 
   Future<UserModel?> fetchCurrentUser() async {

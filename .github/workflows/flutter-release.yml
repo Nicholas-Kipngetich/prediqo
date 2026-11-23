@@ -34,6 +34,9 @@ jobs:
         # Without --overwrite, existing lib/ and test/ sources are preserved.
         run: flutter create . --project-name prediqo --org com.prediqo --platforms android
 
+      - name: Provide Firebase Android config
+        run: cp android/app/google-services.example.json android/app/google-services.json
+
       - name: Install dependencies
         run: flutter pub get
 
