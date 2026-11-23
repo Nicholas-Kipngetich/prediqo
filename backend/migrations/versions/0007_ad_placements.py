@@ -50,7 +50,7 @@ def upgrade() -> None:
             sa.text(
                 "INSERT INTO ad_placements "
                 "(id, key, name, ad_type, unit_id, enabled, frequency_cap_per_hour, vip_excluded) "
-                f"VALUES ('f000000000000000000000000000000{index:02d}', '{key}', '{name}', "
+                f"VALUES ('{index:032x}', '{key}', '{name}', "
                 f"'{ad_type}', '{unit_id}', {enabled}, 2, 1)"
             )
         )
