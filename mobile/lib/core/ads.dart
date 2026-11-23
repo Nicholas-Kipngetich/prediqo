@@ -116,27 +116,13 @@ class AdService {
   ) async {
     if (!canShow(config, isVip, consent, 'app_open')) return;
     final placement = config.placement('app_open')!;
-    final ad = AppOpenAd(
+    await AppOpenAd.load(
       adUnitId: placement.unitId,
       request: AdRequest(),
-      onAdLoaded: (loaded) => loaded.show(),
-      onAdFailedToLoad: (failed, error) => failed.dispose(),
-    );
-    await ad.load();
-  }
-
-  Future<InterstitialAd?> loadInterstitial(
-    AdsConfig config,
-    bool isVip,
-    bool consent,
-  ) async {
-    if (!canShow(config, isVip, consent, 'interstitial_navigation')) {
-      return null;
-    }
-    final placement = config.placement('interstitial_navigation')!;
-    return InterstitialAd.load(
-      adUnitId: placement.unitId,
-      request: AdRequest(),
+      adLoadCallback: AppOpenAdLoadCallback(
+        onAdLoaded: (ad) => ad.show(),
+        onAdFailedToLoad: (error) {},
+      ),
     );
   }
 }
