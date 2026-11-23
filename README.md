@@ -28,7 +28,7 @@ Repository: https://github.com/Nicholas-Kipngetich/prediqo.git
 | `mypy app` | ✅ No issues in 12 source files |
 | `npm run build` (admin dashboard) | ✅ Compiled and static pages generated |
 | `docker-compose.yml` parse | ✅ 7 services, 3 volumes |
-| Flutter `analyze` / `test` | ⏳ pending Flutter SDK install |
+| Flutter CI (`pub get`, `analyze`, `format`, `test`) | ✅ passes on `main` and `develop` (Flutter 3.50.1 / Dart 3.13) |
 
 > **Windows note:** this machine's Application Control policy blocks some compiled
 > Python extensions (`.pyd`). SQLAlchemy is therefore pinned to `<2.1`, which has a
