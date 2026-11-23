@@ -3,6 +3,7 @@ name: Admin Dashboard CI
 on:
   push:
     branches: [main, develop]
+    tags: ["v*"]
     paths: ["admin-dashboard/**", ".github/workflows/admin-ci.yml"]
   pull_request:
     branches: [main, develop]
