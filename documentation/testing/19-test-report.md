@@ -9,7 +9,7 @@ Scope: all automated suites and live integration checks completed to date.
 
 | Suite | Command | Result |
 |---|---|---|
-| Backend unit + API tests | `pytest -q` (backend) | **44 passed** |
+| Backend unit + API tests | `pytest -q` (backend) | **47 passed** (includes 3 Celery automation tests) |
 | AI-engine tests | `pytest -q ../ai-engine/tests` | **6 passed** |
 | Backend lint | `ruff check app tests` | clean |
 | Backend format | `ruff format --check app tests` | 65 files formatted |
@@ -19,8 +19,12 @@ Scope: all automated suites and live integration checks completed to date.
 | Android release | `flutter build appbundle --release` (tag/dispatch workflow) | ✅ AAB produced (49.5 MB artifact) |
 | Backend CI | tests + lint + format + types + AI tests | green |
 
-Total automated tests: **50 passing** (44 backend + 6 AI-engine), plus 1 Flutter widget
+Total automated tests: **53 passing** (47 backend + 6 AI-engine), plus 1 Flutter widget
 test and 6 compiled admin routes.
+
+Background automation is registered with Celery Beat: fixture sync every 6 hours,
+prediction generation hourly, settlement every 30 minutes and notification generation
+every 15 minutes.
 
 ---
 
