@@ -1,5 +1,5 @@
-const API = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000';
-const TOKEN = process.env.NEXT_PUBLIC_DEV_TOKEN ?? 'prediqo-dev-token';
+const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const TOKEN = process.env.NEXT_PUBLIC_DEV_TOKEN || 'prediqo-dev-token';
 
 async function request<T>(path: string, method: 'GET' | 'POST' = 'GET'): Promise<T> {
   const response = await fetch(`${API}${path}`, {
