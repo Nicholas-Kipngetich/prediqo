@@ -16,7 +16,13 @@ class AppScaffold extends StatelessWidget {
   });
 
   void _navigate(BuildContext context, int index) {
-    const paths = ['/home', '/matches', '/predictions', '/performance', '/profile'];
+    const paths = [
+      '/home',
+      '/matches',
+      '/predictions',
+      '/performance',
+      '/profile'
+    ];
     if (index < paths.length) {
       context.go(paths[index]);
     }

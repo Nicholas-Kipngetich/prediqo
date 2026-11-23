@@ -17,7 +17,8 @@ class PredictionsScreen extends StatelessWidget {
       selectedIndex: 2,
       body: EmptyState(
         title: 'No predictions published yet',
-        message: 'Predictions appear here after validated models are deployed in '
+        message:
+            'Predictions appear here after validated models are deployed in '
             'Phase 5. Nothing is shown before it can be verified.',
         icon: Icons.insights_outlined,
       ),
@@ -35,7 +36,8 @@ class PerformanceScreen extends StatelessWidget {
       selectedIndex: 3,
       body: EmptyState(
         title: 'No settled predictions yet',
-        message: 'Accuracy and calibration charts appear after predictions have '
+        message:
+            'Accuracy and calibration charts appear after predictions have '
             'been settled. Sample sizes are always shown.',
         icon: Icons.bar_chart_outlined,
       ),
@@ -99,7 +101,8 @@ class ProfileScreen extends ConsumerWidget {
     );
   }
 
-  Widget _tile(BuildContext context, IconData icon, String label, String route) {
+  Widget _tile(
+      BuildContext context, IconData icon, String label, String route) {
     return Card(
       child: ListTile(
         leading: Icon(icon, color: AppColors.primary),
@@ -146,7 +149,8 @@ class VipScreen extends StatelessWidget {
           ),
           EmptyState(
             title: 'Purchase flow in Phase 7',
-            message: 'Subscriptions are verified by the backend via Google Play '
+            message:
+                'Subscriptions are verified by the backend via Google Play '
                 'Billing. No payment is taken in this build.',
             icon: Icons.workspace_premium_outlined,
           ),
