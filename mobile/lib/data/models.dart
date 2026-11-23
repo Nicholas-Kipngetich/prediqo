@@ -157,7 +157,7 @@ class TokenPackageModel {
     );
   }
 
-  String get priceLabel => '${currency} ${(priceMinor / 100).toStringAsFixed(0)}';
+  String get priceLabel => '$currency ${(priceMinor / 100).toStringAsFixed(0)}';
 }
 
 class TokenBalanceModel {
@@ -195,7 +195,7 @@ class PlanModel {
     );
   }
 
-  String get priceLabel => '${currency} ${(priceMinor / 100).toStringAsFixed(0)}';
+  String get priceLabel => '$currency ${(priceMinor / 100).toStringAsFixed(0)}';
 }
 
 class SubscriptionStatusModel {
