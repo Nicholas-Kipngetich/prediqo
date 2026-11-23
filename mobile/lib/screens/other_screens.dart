@@ -59,20 +59,67 @@ class PredictionsScreen extends ConsumerWidget {
   }
 }
 
-class PerformanceScreen extends StatelessWidget {
+class PerformanceScreen extends ConsumerWidget {
   const PerformanceScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return const AppScaffold(
+  Widget build(BuildContext context, WidgetRef ref) {
+    final performance = ref.watch(performanceProvider);
+
+    return AppScaffold(
       title: 'Performance',
       selectedIndex: 3,
-      body: EmptyState(
-        title: 'No settled predictions yet',
-        message:
-            'Accuracy and calibration charts appear after predictions have '
-            'been settled. Sample sizes are always shown.',
-        icon: Icons.bar_chart_outlined,
+      body: performance.when(
+        data: (data) => ListView(
+          padding: const EdgeInsets.all(16),
+          children: [
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  children: [
+                    const Text(
+                      'Accuracy',
+                      style: TextStyle(color: AppColors.textSecondary),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      data.accuracyLabel,
+                      style: const TextStyle(
+                        fontSize: 36,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.primary,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text('Sample size: ${data.sampleSize}'),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+            _statTile('Total predictions', data.totalPredictions),
+            _statTile('Settled', data.settledPredictions),
+            _statTile('Correct', data.correct),
+            _statTile('Incorrect', data.incorrect),
+            _statTile('Pending', data.pending),
+            _statTile('Void', data.void),
+          ],
+        ),
+        loading: () => const LoadingState(),
+        error: (error, _) => ErrorState(
+          error: error,
+          onRetry: () => ref.invalidate(performanceProvider),
+        ),
+      ),
+    );
+  }
+
+  Widget _statTile(String label, int value) {
+    return Card(
+      child: ListTile(
+        title: Text(label),
+        trailing: Text(value.toString()),
       ),
     );
   }

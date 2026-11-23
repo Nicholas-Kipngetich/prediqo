@@ -132,6 +132,47 @@ class FixturePage {
   }
 }
 
+class PerformanceOverview {
+  final int totalPredictions;
+  final int settledPredictions;
+  final int correct;
+  final int incorrect;
+  final int pending;
+  final int void;
+  final double? accuracy;
+  final int sampleSize;
+
+  PerformanceOverview({
+    required this.totalPredictions,
+    required this.settledPredictions,
+    required this.correct,
+    required this.incorrect,
+    required this.pending,
+    required this.void,
+    required this.accuracy,
+    required this.sampleSize,
+  });
+
+  factory PerformanceOverview.fromJson(Map<String, dynamic> json) {
+    final rawAccuracy = json['accuracy'];
+    return PerformanceOverview(
+      totalPredictions: json['total_predictions'] as int? ?? 0,
+      settledPredictions: json['settled_predictions'] as int? ?? 0,
+      correct: json['correct'] as int? ?? 0,
+      incorrect: json['incorrect'] as int? ?? 0,
+      pending: json['pending'] as int? ?? 0,
+      void: json['void'] as int? ?? 0,
+      accuracy: rawAccuracy is num ? rawAccuracy.toDouble() : null,
+      sampleSize: json['sample_size'] as int? ?? 0,
+    );
+  }
+
+  String get accuracyLabel {
+    if (accuracy == null) return 'Not yet available';
+    return '${(accuracy! * 100).toStringAsFixed(1)}%';
+  }
+}
+
 class PredictionModel {
   final String id;
   final String fixtureId;

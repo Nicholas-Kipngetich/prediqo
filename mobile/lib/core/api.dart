@@ -76,6 +76,13 @@ class FixturesRepository {
         .toList();
   }
 
+  Future<PerformanceOverview> fetchPerformanceOverview() async {
+    final response = await _dio.get<Map<String, dynamic>>(
+      '/api/v1/performance/overview',
+    );
+    return PerformanceOverview.fromJson(response.data ?? {});
+  }
+
   Future<UserModel?> fetchCurrentUser() async {
     try {
       final response = await _dio.post<Map<String, dynamic>>(

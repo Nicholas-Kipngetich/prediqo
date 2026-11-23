@@ -36,6 +36,10 @@ final predictionsProvider =
   return ref.watch(fixturesRepositoryProvider).fetchPredictions(market);
 });
 
+final performanceProvider = FutureProvider<PerformanceOverview>((ref) async {
+  return ref.watch(fixturesRepositoryProvider).fetchPerformanceOverview();
+});
+
 final currentUserProvider = FutureProvider<UserModel?>((ref) async {
   return ref.watch(fixturesRepositoryProvider).fetchCurrentUser();
 });

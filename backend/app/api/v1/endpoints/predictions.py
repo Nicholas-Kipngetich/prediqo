@@ -13,6 +13,7 @@ from app.models.identity import User
 from app.models.predictions import ModelVersion, Prediction, PredictionMarket
 from app.schemas.predictions import GenerationResultOut, PredictionOut
 from app.services.prediction_service import GenerationResult, generate_predictions
+from app.services.settlement_service import SettlementResult, settle_predictions
 
 router = APIRouter(prefix="/predictions", tags=["predictions"])
 
@@ -91,3 +92,11 @@ async def generate(
 ) -> GenerationResultOut:
     result: GenerationResult = await generate_predictions(session)
     return GenerationResultOut(**result.__dict__)
+
+
+@router.post("/settle")
+async def settle(
+    admin: User = Depends(require_admin),
+    session: AsyncSession = Depends(get_session),
+) -> SettlementResult:
+    return await settle_predictions(session)
