@@ -40,7 +40,11 @@ class AuthService {
     return _auth.signInWithCredential(credential);
   }
 
-  Future<String?> idToken() => _auth.currentUser?.getIdToken();
+  Future<String?> idToken() async {
+    final user = _auth.currentUser;
+    if (user == null) return null;
+    return user.getIdToken();
+  }
 
   Future<void> signOut() async {
     await GoogleSignIn().signOut();

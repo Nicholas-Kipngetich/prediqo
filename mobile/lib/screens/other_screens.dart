@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../core/api.dart';
 import '../core/auth_service.dart';
 import '../state/providers.dart';
 import '../theme/app_theme.dart';
