@@ -89,15 +89,15 @@ def upgrade() -> None:
         )
     )
     for market_id, code, name, group in [
-        (1, "1X2", "Match Result", "result"),
-        (2, "OU25", "Over/Under 2.5 Goals", "goals"),
-        (3, "BTTS", "Both Teams to Score", "goals"),
-        (4, "CS", "Correct Score", "goals"),
+        ("c0000000-0000-0000-0000-000000000001", "1X2", "Match Result", "result"),
+        ("c0000000-0000-0000-0000-000000000002", "OU25", "Over/Under 2.5 Goals", "goals"),
+        ("c0000000-0000-0000-0000-000000000003", "BTTS", "Both Teams to Score", "goals"),
+        ("c0000000-0000-0000-0000-000000000004", "CS", "Correct Score", "goals"),
     ]:
         op.execute(
             sa.text(
                 "INSERT INTO prediction_markets (id, code, name, market_group, active) "
-                f"VALUES ({market_id}, '{code}', '{name}', '{group}', 1)"
+                f"VALUES ('{market_id}', '{code}', '{name}', '{group}', 1)"
             )
         )
 
