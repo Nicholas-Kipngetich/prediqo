@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../core/ads.dart';
 import '../core/auth_service.dart';
+import '../state/providers.dart';
 import '../theme/app_theme.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
@@ -29,14 +31,28 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
     super.dispose();
   }
 
-  void _continue() {
+  Future<void> _continue() async {
     if (!mounted) return;
     bool signedIn = false;
+    bool isVip = false;
     try {
       signedIn = ref.read(authServiceProvider).isSignedIn;
+      final user = await ref.read(currentUserProvider.future);
+      isVip = user?.isVip ?? false;
     } catch (_) {
-      // Firebase unavailable in local tests.
+      // Firebase or API unavailable in local tests.
     }
+    try {
+      final config = await ref.read(adsConfigProvider.future);
+      await AdService.instance.showAppOpen(
+        config,
+        isVip,
+        ref.read(adConsentProvider),
+      );
+    } catch (_) {
+      // Ads are optional.
+    }
+    if (!mounted) return;
     context.go(signedIn ? '/home' : '/auth');
   }
 

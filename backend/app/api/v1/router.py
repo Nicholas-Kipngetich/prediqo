@@ -4,6 +4,7 @@ from fastapi import APIRouter
 
 from app.api.v1.endpoints import (
     admin,
+    ads,
     auth,
     fixtures,
     monetization,
@@ -16,6 +17,7 @@ from app.api.v1.endpoints import (
 
 router = APIRouter()
 router.include_router(system.router)
+router.include_router(ads.router)
 router.include_router(fixtures.router)
 router.include_router(predictions.router)
 router.include_router(performance.router)

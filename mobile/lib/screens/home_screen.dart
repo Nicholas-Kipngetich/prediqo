@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../data/models.dart';
 import '../state/providers.dart';
 import '../theme/app_theme.dart';
+import '../widgets/ad_banner.dart';
 import '../widgets/app_scaffold.dart';
 import '../widgets/design_system.dart';
 
@@ -36,6 +37,7 @@ class HomeScreen extends ConsumerWidget {
           Text(date, style: const TextStyle(color: AppColors.textSecondary)),
           const SizedBox(height: 8),
           _statusChips(user, tokenBalance),
+          const AdBanner(),
           SectionHeader(
             title: 'Today\'s Matches',
             onAction: () => context.go('/matches'),

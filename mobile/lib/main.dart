@@ -5,6 +5,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'core/ads.dart';
 import 'core/firebase_options.dart';
 import 'router/app_router.dart';
 import 'theme/app_theme.dart';
@@ -19,6 +20,11 @@ Future<void> main() async {
     // In local widget tests Firebase is unavailable; API calls fall back to
     // the development token. Production builds must initialise Firebase.
   }
+  try {
+    await AdService.instance.initialize();
+  } catch (_) {
+    // Ads are optional; the app works without AdMob available.
+  }
   runApp(const ProviderScope(child: PrediqoApp()));
 }
 
@@ -27,6 +33,7 @@ class PrediqoApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    ref.watch(adConsentLoadedProvider);
     final router = ref.watch(routerProvider);
     return MaterialApp.router(
       title: 'Prediqo',
