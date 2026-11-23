@@ -20,7 +20,8 @@ Repository: https://github.com/Nicholas-Kipngetich/prediqo.git
 | 3 — Sports data integration | ✅ Complete (22 tests); provider licence decision pending |
 | 4 — Mobile application UI | ✅ Complete (design system, navigation, core screens; Flutter CI green) |
 | 5 — AI prediction engine | ✅ Complete (Poisson/Dixon–Coles + Elo + calibrated ensemble; 32 tests green) |
-| 6–12 | ⏳ Not started |
+| 6 — Analytics | ✅ Complete (30 backend tests; settlement + performance verified live) |
+| 7–12 | ⏳ Not started |
 
 ### Phase 1 verification results (2026-11-23)
 

@@ -80,6 +80,22 @@ deterministic explanation and `is_sample_data: true`. Probabilities are integer 
 points summing to 10,000. XGBoost is intentionally deferred until real historical data
 is licensed and validation thresholds can be set — see the Phase 0 AI/ML decision.
 
+### Phase 6 settlement and performance
+
+```powershell
+# Mark four sample fixtures as finished (dev helper only)
+& ".\backend\.venv\Scripts\python.exe" ".\backend\scripts\dev_finish_fixtures.py"
+
+# Settle predictions and inspect analytics
+Invoke-RestMethod -Method Post `
+  -Uri http://127.0.0.1:8000/api/v1/predictions/settle -Headers $h
+Invoke-RestMethod 'http://127.0.0.1:8000/api/v1/performance/overview'
+Invoke-RestMethod 'http://127.0.0.1:8000/api/v1/performance/breakdown'
+Invoke-RestMethod 'http://127.0.0.1:8000/api/v1/performance/calibration'
+```
+
+Accuracy is always shown with its sample size; losing predictions are never deleted.
+
 ### Starting it yourself
 
 ```powershell
