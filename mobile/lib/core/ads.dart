@@ -50,7 +50,8 @@ class AdsConfig {
       enabled: json['ads_enabled'] as bool? ?? false,
       appId: json['admob_app_id_android'] as String? ?? '',
       placements: raw
-          .map((item) => AdPlacementConfig.fromJson(item as Map<String, dynamic>))
+          .map((item) =>
+              AdPlacementConfig.fromJson(item as Map<String, dynamic>))
           .toList(),
     );
   }
