@@ -25,7 +25,8 @@ Repository: https://github.com/Nicholas-Kipngetich/prediqo.git
 | 8 — Advertising | ⏸ Deferred — requires legal/policy review before activation |
 | 9 — Admin dashboard | ✅ Complete (39 tests; dashboard renders live at :3000) |
 | 10 — Notifications | ✅ Complete (44 tests; preferences + dedupe verified live) |
-| 11–12 | ⏳ Not started |
+| 11 — Hosting & deployment | ✅ Complete (portable compose, backup/restore tested) |
+| 12 — Production readiness | ⏳ Not started |
 
 ### Phase 1 verification results (2026-11-23)
 
