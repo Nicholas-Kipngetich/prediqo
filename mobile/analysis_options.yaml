@@ -9,3 +9,6 @@ linter:
 analyzer:
   errors:
     todo: ignore
+    # Flutter 3.50 deprecates material.dart in favour of material_ui.dart.
+    # The design system still uses Material widgets; migrate in a later phase.
+    deprecated_member_use: ignore
