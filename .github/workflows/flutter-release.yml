@@ -60,9 +60,21 @@ jobs:
           flutter build appbundle --release --no-shrink \
             --dart-define=API_BASE_URL=${{ inputs.api_base_url || secrets.API_BASE_URL || 'https://api.prediqo.app' }}
 
+      - name: Build release APK for device testing
+        run: |
+          flutter build apk --release --no-shrink \
+            --dart-define=API_BASE_URL=${{ inputs.api_base_url || secrets.API_BASE_URL || 'https://api.prediqo.app' }}
+
       - name: Upload App Bundle
         uses: actions/upload-artifact@v4
         with:
           name: prediqo-appbundle
           path: mobile/build/app/outputs/bundle/release/app-release.aab
+          if-no-files-found: error
+
+      - name: Upload installable APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: prediqo-apk
+          path: mobile/build/app/outputs/flutter-apk/app-release.apk
           if-no-files-found: error
