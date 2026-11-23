@@ -145,6 +145,20 @@ In dev mode, FCM delivery is simulated and recorded as `SENT`. Outside developme
 Firebase Admin SDK sends multicast messages to registered device tokens. All notices
 are deduplicated by `dedupe_key` and respect saved preferences.
 
+### Daily analysis quota
+
+`GET /api/v1/fixtures/{id}/analysis` is gated: free users get
+`FREE_DAILY_ANALYSIS` fixtures per day (default 1), VIP users are unlimited, and a
+token unlock for `target_type=analysis` bypasses the limit. The response includes
+`entitlement: free|vip|token`, the market probabilities and the model explanation.
+
+If you previously verified a VIP subscription locally, remove it before testing the
+free quota:
+
+```powershell
+& ".\backend\.venv\Scripts\python.exe" ".\backend\scripts\dev_revoke_vip.py"
+```
+
 ### Starting it yourself
 
 ```powershell
