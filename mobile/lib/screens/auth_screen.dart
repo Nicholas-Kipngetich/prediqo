@@ -167,8 +167,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                     child: const Text('Forgot password?'),
                   ),
                   TextButton(
-                    onPressed: () =>
-                        setState(() => _register = !_register),
+                    onPressed: () => setState(() => _register = !_register),
                     child: Text(
                       _register
                           ? 'Already have an account? Sign in'
