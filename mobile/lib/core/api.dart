@@ -76,6 +76,32 @@ class FixturesRepository {
         .toList();
   }
 
+  Future<TokenBalanceModel> fetchTokenBalance() async {
+    final response = await _dio.get<Map<String, dynamic>>('/api/v1/tokens/balance');
+    return TokenBalanceModel.fromJson(response.data ?? {});
+  }
+
+  Future<List<TokenPackageModel>> fetchTokenPackages() async {
+    final response = await _dio.get<List<dynamic>>('/api/v1/tokens/packages');
+    final raw = response.data ?? [];
+    return raw
+        .map((item) => TokenPackageModel.fromJson(item as Map<String, dynamic>))
+        .toList();
+  }
+
+  Future<List<PlanModel>> fetchPlans() async {
+    final response = await _dio.get<List<dynamic>>('/api/v1/subscriptions/plans');
+    final raw = response.data ?? [];
+    return raw.map((item) => PlanModel.fromJson(item as Map<String, dynamic>)).toList();
+  }
+
+  Future<SubscriptionStatusModel> fetchSubscriptionStatus() async {
+    final response = await _dio.get<Map<String, dynamic>>(
+      '/api/v1/subscriptions/status',
+    );
+    return SubscriptionStatusModel.fromJson(response.data ?? {});
+  }
+
   Future<PerformanceOverview> fetchPerformanceOverview() async {
     final response = await _dio.get<Map<String, dynamic>>(
       '/api/v1/performance/overview',

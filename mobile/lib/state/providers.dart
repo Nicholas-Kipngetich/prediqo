@@ -36,6 +36,23 @@ final predictionsProvider =
   return ref.watch(fixturesRepositoryProvider).fetchPredictions(market);
 });
 
+final tokenBalanceProvider = FutureProvider<TokenBalanceModel>((ref) async {
+  return ref.watch(fixturesRepositoryProvider).fetchTokenBalance();
+});
+
+final tokenPackagesProvider = FutureProvider<List<TokenPackageModel>>((ref) async {
+  return ref.watch(fixturesRepositoryProvider).fetchTokenPackages();
+});
+
+final plansProvider = FutureProvider<List<PlanModel>>((ref) async {
+  return ref.watch(fixturesRepositoryProvider).fetchPlans();
+});
+
+final subscriptionStatusProvider =
+    FutureProvider<SubscriptionStatusModel>((ref) async {
+  return ref.watch(fixturesRepositoryProvider).fetchSubscriptionStatus();
+});
+
 final performanceProvider = FutureProvider<PerformanceOverview>((ref) async {
   return ref.watch(fixturesRepositoryProvider).fetchPerformanceOverview();
 });

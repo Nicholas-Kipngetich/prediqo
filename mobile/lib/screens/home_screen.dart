@@ -16,6 +16,7 @@ class HomeScreen extends ConsumerWidget {
     final fixtures = ref.watch(fixturesProvider);
     final trending = ref.watch(trendingProvider);
     final user = ref.watch(currentUserProvider);
+    final tokenBalance = ref.watch(tokenBalanceProvider);
     final now = DateTime.now();
     final date = '${now.day}/${now.month}/${now.year}';
 
@@ -34,7 +35,7 @@ class HomeScreen extends ConsumerWidget {
           _greeting(user),
           Text(date, style: const TextStyle(color: AppColors.textSecondary)),
           const SizedBox(height: 8),
-          _statusChips(user),
+          _statusChips(user, tokenBalance),
           SectionHeader(
             title: 'Today\'s Matches',
             onAction: () => context.go('/matches'),
@@ -59,7 +60,10 @@ class HomeScreen extends ConsumerWidget {
     );
   }
 
-  Widget _statusChips(AsyncValue<UserModel?> user) {
+  Widget _statusChips(
+    AsyncValue<UserModel?> user,
+    AsyncValue<TokenBalanceModel> tokenBalance,
+  ) {
     final isVip = user.value?.isVip ?? false;
     return Wrap(
       spacing: 8,
@@ -68,8 +72,8 @@ class HomeScreen extends ConsumerWidget {
           label: Text(isVip ? 'VIP Member' : 'Free Plan'),
           backgroundColor: isVip ? AppColors.primary : AppColors.surfaceAlt,
         ),
-        const Chip(
-          label: Text('Tokens: 0'),
+        Chip(
+          label: Text('Tokens: ${tokenBalance.value?.balance ?? 0}'),
           backgroundColor: AppColors.surfaceAlt,
         ),
       ],

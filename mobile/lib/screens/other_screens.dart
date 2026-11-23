@@ -194,44 +194,66 @@ class ProfileScreen extends ConsumerWidget {
   }
 }
 
-class VipScreen extends StatelessWidget {
+class VipScreen extends ConsumerWidget {
   const VipScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final status = ref.watch(subscriptionStatusProvider);
+    final plans = ref.watch(plansProvider);
+
     return AppScaffold(
       title: 'VIP Membership',
       selectedIndex: 4,
       body: ListView(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         children: [
-          Card(
-            child: Padding(
-              padding: EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Prediqo VIP',
-                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(height: 8),
-                  Text('KSh 499 per month'),
-                  SizedBox(height: 16),
-                  Text('• Expanded daily predictions'),
-                  Text('• Advanced match analysis'),
-                  Text('• Detailed AI explanations'),
-                  Text('• Extended prediction history'),
-                  Text('• Ad-free experience'),
-                ],
+          status.when(
+            data: (data) => Card(
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      data.isVip ? 'VIP Active' : 'Free Plan',
+                      style: const TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text('Status: ${data.status ?? 'none'}'),
+                    Text('Plan: ${data.planCode ?? 'none'}'),
+                  ],
+                ),
               ),
             ),
+            loading: () => const LoadingState(),
+            error: (error, _) => Text('Error: $error'),
           ),
-          EmptyState(
-            title: 'Purchase flow in Phase 7',
-            message:
-                'Subscriptions are verified by the backend via Google Play '
-                'Billing. No payment is taken in this build.',
+          const SectionHeader(title: 'Plans'),
+          plans.when(
+            data: (items) => Column(
+              children: items
+                  .map(
+                    (plan) => Card(
+                      child: ListTile(
+                        title: Text('VIP ${plan.interval}'),
+                        subtitle: Text(plan.priceLabel),
+                        trailing: Text(plan.code),
+                      ),
+                    ),
+                  )
+                  .toList(),
+            ),
+            loading: () => const LoadingState(),
+            error: (error, _) => Text('Error: $error'),
+          ),
+          const EmptyState(
+            title: 'Purchase flow',
+            message: 'Subscriptions are verified by the backend via Google '
+                'Play Billing. No payment is taken in this build.',
             icon: Icons.workspace_premium_outlined,
           ),
         ],
@@ -240,19 +262,71 @@ class VipScreen extends StatelessWidget {
   }
 }
 
-class TokenStoreScreen extends StatelessWidget {
+class TokenStoreScreen extends ConsumerWidget {
   const TokenStoreScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return const AppScaffold(
+  Widget build(BuildContext context, WidgetRef ref) {
+    final balance = ref.watch(tokenBalanceProvider);
+    final packages = ref.watch(tokenPackagesProvider);
+
+    return AppScaffold(
       title: 'Token Store',
       selectedIndex: 4,
-      body: EmptyState(
-        title: 'Token store in Phase 7',
-        message: 'Token packages and the immutable transaction ledger are '
-            'implemented before any purchase is enabled.',
-        icon: Icons.confirmation_number_outlined,
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          balance.when(
+            data: (data) => Card(
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  children: [
+                    const Text(
+                      'Balance',
+                      style: TextStyle(color: AppColors.textSecondary),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      '${data.balance}',
+                      style: const TextStyle(
+                        fontSize: 36,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.primary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            loading: () => const LoadingState(),
+            error: (error, _) => Text('Error: $error'),
+          ),
+          const SectionHeader(title: 'Packages'),
+          packages.when(
+            data: (items) => Column(
+              children: items
+                  .map(
+                    (item) => Card(
+                      child: ListTile(
+                        title: Text(item.name),
+                        subtitle: Text('${item.tokens} tokens'),
+                        trailing: Text(item.priceLabel),
+                      ),
+                    ),
+                  )
+                  .toList(),
+            ),
+            loading: () => const LoadingState(),
+            error: (error, _) => Text('Error: $error'),
+          ),
+          const EmptyState(
+            title: 'Purchases are server-verified',
+            message: 'No payment is taken in this build. Token credits use an '
+                'immutable ledger.',
+            icon: Icons.confirmation_number_outlined,
+          ),
+        ],
       ),
     );
   }

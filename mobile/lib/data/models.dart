@@ -132,6 +132,92 @@ class FixturePage {
   }
 }
 
+class TokenPackageModel {
+  final String id;
+  final String name;
+  final int tokens;
+  final int priceMinor;
+  final String currency;
+
+  TokenPackageModel({
+    required this.id,
+    required this.name,
+    required this.tokens,
+    required this.priceMinor,
+    required this.currency,
+  });
+
+  factory TokenPackageModel.fromJson(Map<String, dynamic> json) {
+    return TokenPackageModel(
+      id: json['id'] as String,
+      name: json['name'] as String,
+      tokens: json['tokens'] as int? ?? 0,
+      priceMinor: json['price_minor'] as int? ?? 0,
+      currency: json['currency'] as String? ?? 'KES',
+    );
+  }
+
+  String get priceLabel => '${currency} ${(priceMinor / 100).toStringAsFixed(0)}';
+}
+
+class TokenBalanceModel {
+  final int balance;
+
+  TokenBalanceModel({required this.balance});
+
+  factory TokenBalanceModel.fromJson(Map<String, dynamic> json) {
+    return TokenBalanceModel(balance: json['balance'] as int? ?? 0);
+  }
+}
+
+class PlanModel {
+  final String id;
+  final String code;
+  final String interval;
+  final int priceMinor;
+  final String currency;
+
+  PlanModel({
+    required this.id,
+    required this.code,
+    required this.interval,
+    required this.priceMinor,
+    required this.currency,
+  });
+
+  factory PlanModel.fromJson(Map<String, dynamic> json) {
+    return PlanModel(
+      id: json['id'] as String,
+      code: json['code'] as String,
+      interval: json['interval'] as String,
+      priceMinor: json['price_minor'] as int? ?? 0,
+      currency: json['currency'] as String? ?? 'KES',
+    );
+  }
+
+  String get priceLabel => '${currency} ${(priceMinor / 100).toStringAsFixed(0)}';
+}
+
+class SubscriptionStatusModel {
+  final bool isVip;
+  final String? status;
+  final String? planCode;
+
+  SubscriptionStatusModel({
+    required this.isVip,
+    this.status,
+    this.planCode,
+  });
+
+  factory SubscriptionStatusModel.fromJson(Map<String, dynamic> json) {
+    return SubscriptionStatusModel(
+      isVip: json['is_vip'] as bool? ?? false,
+      status: json['status'] as String?,
+      planCode: json['plan_code'] as String?,
+    );
+  }
+}
+
 class PerformanceOverview {
   final int totalPredictions;
   final int settledPredictions;
