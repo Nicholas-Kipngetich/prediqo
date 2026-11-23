@@ -41,4 +41,7 @@ test/           Widget smoke test.
 ```
 
 Phase 4 will introduce the design system, full navigation, all 13 screens and the
-reusable match components.
+reusable match components. Additional packages (Firebase, Hive, fl_chart, Freezed,
+secure storage, intl) are added in Phase 4 with `flutter pub add` at that point, so
+their versions are resolved against the installed Flutter/Dart SDK instead of being
+pinned speculatively in the foundation.
