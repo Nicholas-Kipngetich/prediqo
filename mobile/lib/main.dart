@@ -115,7 +115,7 @@ class HomeScreen extends ConsumerWidget {
         ),
       ),
       bottomNavigationBar: NavigationBar(
-        destinations: [
+        destinations: const [
           NavigationDestination(icon: Icon(Icons.home_outlined), label: 'Home'),
           NavigationDestination(icon: Icon(Icons.sports_soccer_outlined), label: 'Matches'),
           NavigationDestination(icon: Icon(Icons.insights_outlined), label: 'Predictions'),
