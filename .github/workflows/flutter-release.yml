@@ -9,6 +9,11 @@ on:
         description: Production API base URL
         required: false
         default: https://api.prediqo.app
+      dev_bypass_auth:
+        description: Skip sign-in for local UI testing
+        type: boolean
+        required: false
+        default: false
 
 jobs:
   build-appbundle:
@@ -58,12 +63,14 @@ jobs:
       - name: Build release App Bundle
         run: |
           flutter build appbundle --release --no-shrink \
-            --dart-define=API_BASE_URL=${{ inputs.api_base_url || secrets.API_BASE_URL || 'https://api.prediqo.app' }}
+            --dart-define=API_BASE_URL=${{ inputs.api_base_url || secrets.API_BASE_URL || 'https://api.prediqo.app' }} \
+            --dart-define=DEV_BYPASS_AUTH=${{ inputs.dev_bypass_auth }}
 
       - name: Build release APK for device testing
         run: |
           flutter build apk --release --no-shrink \
-            --dart-define=API_BASE_URL=${{ inputs.api_base_url || secrets.API_BASE_URL || 'https://api.prediqo.app' }}
+            --dart-define=API_BASE_URL=${{ inputs.api_base_url || secrets.API_BASE_URL || 'https://api.prediqo.app' }} \
+            --dart-define=DEV_BYPASS_AUTH=${{ inputs.dev_bypass_auth }}
 
       - name: Upload App Bundle
         uses: actions/upload-artifact@v4

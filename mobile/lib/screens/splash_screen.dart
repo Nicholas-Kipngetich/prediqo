@@ -9,6 +9,11 @@ import '../core/auth_service.dart';
 import '../state/providers.dart';
 import '../theme/app_theme.dart';
 
+const bool devBypassAuth = bool.fromEnvironment(
+  'DEV_BYPASS_AUTH',
+  defaultValue: false,
+);
+
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
 
@@ -53,7 +58,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
       // Ads are optional.
     }
     if (!mounted) return;
-    context.go(signedIn ? '/home' : '/auth');
+    context.go(devBypassAuth || signedIn ? '/home' : '/auth');
   }
 
   @override
