@@ -5,13 +5,13 @@ import 'package:prediqo/main.dart';
 void main() {
   testWidgets('Prediqo app renders the home screen', (tester) async {
     await tester.pumpWidget(
-      const ProviderScope(
+      ProviderScope(
         overrides: [
           healthProvider.overrideWith(
             (ref) async => <String, dynamic>{'status': 'ok'},
           ),
         ],
-        child: PrediqoApp(),
+        child: const PrediqoApp(),
       ),
     );
 

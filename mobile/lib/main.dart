@@ -1,4 +1,7 @@
 import 'package:dio/dio.dart';
+// Flutter 3.50 deprecates material.dart in favour of material_ui.dart. Keep the
+// established import until Phase 4 migrates the full design system.
+// ignore: deprecated_member_use
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -111,7 +114,7 @@ class HomeScreen extends ConsumerWidget {
           ],
         ),
       ),
-      bottomNavigationBar: const NavigationBar(
+      bottomNavigationBar: NavigationBar(
         destinations: [
           NavigationDestination(icon: Icon(Icons.home_outlined), label: 'Home'),
           NavigationDestination(icon: Icon(Icons.sports_soccer_outlined), label: 'Matches'),
