@@ -26,7 +26,7 @@ Repository: https://github.com/Nicholas-Kipngetich/prediqo.git
 | 9 — Admin dashboard | ✅ Complete (39 tests; dashboard renders live at :3000) |
 | 10 — Notifications | ✅ Complete (44 tests; preferences + dedupe verified live) |
 | 11 — Hosting & deployment | ✅ Complete (portable compose, backup/restore tested) |
-| 12 — Production readiness | ✅ Documentation & verification complete; external blockers listed below |
+| 12 — Production readiness | ✅ Docs + Android App Bundle build verified; external blockers listed below |
 
 **Release blockers (external):** real device test, licensed data provider + budget,
 legal review/public policy URLs, Play sandbox purchases, FCM device test, load test,

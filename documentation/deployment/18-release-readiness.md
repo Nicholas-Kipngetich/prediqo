@@ -6,7 +6,7 @@
 
 | # | Criterion | Status | Evidence |
 |---|---|---|---|
-| 1 | Flutter app builds successfully | ✅ CI green; local Android build pending device tooling | Flutter CI |
+| 1 | Flutter app builds successfully | ✅ `flutter build appbundle --release` green; AAB artifact produced | Flutter CI + Release workflow |
 | 2 | Android app works on real devices | ⏳ Not yet tested | Requires physical device |
 | 3 | Backend operates reliably | ✅ 44 tests + live checks | test report |
 | 4 | PostgreSQL migrations work | ✅ 0001–0005 applied on SQLite; Postgres to verify in staging | alembic upgrade head |
