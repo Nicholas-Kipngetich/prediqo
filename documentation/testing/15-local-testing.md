@@ -119,6 +119,18 @@ development the Google Play Developer API verifier is required; a client-side su
 flag is never trusted. Duplicate purchase tokens and duplicate unlocks are prevented
 by the immutable ledger. VIP entitlements take priority over token charges.
 
+### Phase 9 admin dashboard
+
+```powershell
+cd admin-dashboard
+npm.cmd run dev
+# open http://localhost:3000
+```
+
+Pages: Overview, Users, Predictions (with sync/generate/settle actions), Monetization
+and System (health + audit log). The dashboard calls the same backend with the dev
+token and renders real data.
+
 ### Starting it yourself
 
 ```powershell

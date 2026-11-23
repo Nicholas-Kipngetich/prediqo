@@ -22,7 +22,9 @@ Repository: https://github.com/Nicholas-Kipngetich/prediqo.git
 | 5 — AI prediction engine | ✅ Complete (Poisson/Dixon–Coles + Elo + calibrated ensemble; 32 tests green) |
 | 6 — Analytics | ✅ Complete (30 backend tests; settlement + performance verified live) |
 | 7 — Tokens & VIP | ✅ Complete (35 tests; purchase + VIP entitlement verified live) |
-| 8–12 | ⏳ Not started |
+| 8 — Advertising | ⏸ Deferred — requires legal/policy review before activation |
+| 9 — Admin dashboard | ✅ Complete (39 tests; dashboard renders live at :3000) |
+| 10–12 | ⏳ Not started |
 
 ### Phase 1 verification results (2026-11-23)
 
