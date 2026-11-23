@@ -361,7 +361,9 @@ class NotificationsScreen extends ConsumerWidget {
                     item.isRead
                         ? Icons.notifications_none
                         : Icons.notifications_active,
-                    color: item.isRead ? AppColors.textSecondary : AppColors.primary,
+                    color: item.isRead
+                        ? AppColors.textSecondary
+                        : AppColors.primary,
                   ),
                   title: Text(item.title),
                   subtitle: Text(item.body),
