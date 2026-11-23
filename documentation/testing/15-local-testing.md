@@ -96,6 +96,29 @@ Invoke-RestMethod 'http://127.0.0.1:8000/api/v1/performance/calibration'
 
 Accuracy is always shown with its sample size; losing predictions are never deleted.
 
+### Phase 7 tokens and VIP
+
+```powershell
+$h = @{ Authorization = 'Bearer prediqo-dev-token' }
+
+Invoke-RestMethod 'http://127.0.0.1:8000/api/v1/tokens/packages'
+Invoke-RestMethod -Method Post `
+  -Uri 'http://127.0.0.1:8000/api/v1/tokens/purchases/verify' -Headers $h `
+  -ContentType application/json `
+  -Body '{"product_id":"com.prediqo.tokens.starter","purchase_token":"dev-1"}'
+Invoke-RestMethod 'http://127.0.0.1:8000/api/v1/tokens/balance' -Headers $h
+Invoke-RestMethod -Method Post `
+  -Uri 'http://127.0.0.1:8000/api/v1/subscriptions/verify' -Headers $h `
+  -ContentType application/json `
+  -Body '{"product_id":"com.prediqo.vip.monthly","purchase_token":"vip-1"}'
+Invoke-RestMethod 'http://127.0.0.1:8000/api/v1/subscriptions/status' -Headers $h
+```
+
+In `development` with `AUTH_MODE=dev`, a dev-only verifier accepts these tokens. Outside
+development the Google Play Developer API verifier is required; a client-side success
+flag is never trusted. Duplicate purchase tokens and duplicate unlocks are prevented
+by the immutable ledger. VIP entitlements take priority over token charges.
+
 ### Starting it yourself
 
 ```powershell
