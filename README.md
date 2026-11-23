@@ -22,7 +22,7 @@ Repository: https://github.com/Nicholas-Kipngetich/prediqo.git
 | 5 — AI prediction engine | ✅ Complete (Poisson/Dixon–Coles + Elo + calibrated ensemble; 32 tests green) |
 | 6 — Analytics | ✅ Complete (30 backend tests; settlement + performance verified live) |
 | 7 — Tokens & VIP | ✅ Complete (35 tests; purchase + VIP entitlement verified live) |
-| 8 — Advertising | ⏸ Deferred — requires legal/policy review before activation |
+| 8 — Advertising | ✅ AdMob infrastructure + test ads enabled (policy review waived by owner) |
 | 9 — Admin dashboard | ✅ Complete (39 tests; dashboard renders live at :3000) |
 | 10 — Notifications | ✅ Complete (44 tests; preferences + dedupe verified live) |
 | 11 — Hosting & deployment | ✅ Complete (portable compose, backup/restore tested) |
