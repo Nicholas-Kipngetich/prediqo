@@ -22,6 +22,9 @@ build/
 *.tsbuildinfo
 npm-debug.log*
 
+# Local build artifacts
+builds/
+
 # Flutter / Dart
 .dart_tool/
 .flutter-plugins
