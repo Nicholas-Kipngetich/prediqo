@@ -103,7 +103,7 @@ class PerformanceScreen extends ConsumerWidget {
             _statTile('Correct', data.correct),
             _statTile('Incorrect', data.incorrect),
             _statTile('Pending', data.pending),
-            _statTile('Void', data.void),
+            _statTile('Void', data.voidCount),
           ],
         ),
         loading: () => const LoadingState(),

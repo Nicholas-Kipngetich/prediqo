@@ -138,7 +138,7 @@ class PerformanceOverview {
   final int correct;
   final int incorrect;
   final int pending;
-  final int void;
+  final int voidCount;
   final double? accuracy;
   final int sampleSize;
 
@@ -148,7 +148,7 @@ class PerformanceOverview {
     required this.correct,
     required this.incorrect,
     required this.pending,
-    required this.void,
+    required this.voidCount,
     required this.accuracy,
     required this.sampleSize,
   });
@@ -161,7 +161,7 @@ class PerformanceOverview {
       correct: json['correct'] as int? ?? 0,
       incorrect: json['incorrect'] as int? ?? 0,
       pending: json['pending'] as int? ?? 0,
-      void: json['void'] as int? ?? 0,
+      voidCount: json['void'] as int? ?? 0,
       accuracy: rawAccuracy is num ? rawAccuracy.toDouble() : null,
       sampleSize: json['sample_size'] as int? ?? 0,
     );
