@@ -42,9 +42,10 @@ jobs:
         # checkReleaseBuilds=false skips that non-essential analysis task.
         run: |
           python3 -c "
-          p = 'android/app/build.gradle'
+          import os
+          p = 'android/app/build.gradle.kts' if os.path.exists('android/app/build.gradle.kts') else 'android/app/build.gradle'
           s = open(p).read()
-          s = s.replace('android {', 'android {\n    lint { checkReleaseBuilds false }', 1)
+          s = s.replace('android {', 'android {\n    lint { checkReleaseBuilds = false }', 1)
           open(p, 'w').write(s)
           "
 
