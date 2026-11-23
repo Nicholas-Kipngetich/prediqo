@@ -40,7 +40,8 @@ final tokenBalanceProvider = FutureProvider<TokenBalanceModel>((ref) async {
   return ref.watch(fixturesRepositoryProvider).fetchTokenBalance();
 });
 
-final tokenPackagesProvider = FutureProvider<List<TokenPackageModel>>((ref) async {
+final tokenPackagesProvider =
+    FutureProvider<List<TokenPackageModel>>((ref) async {
   return ref.watch(fixturesRepositoryProvider).fetchTokenPackages();
 });
 
