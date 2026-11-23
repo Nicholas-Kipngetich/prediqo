@@ -42,6 +42,11 @@ class Settings(BaseSettings):
     football_data_base_url: str = "https://v3.football.api-sports.io"
     allow_sample_data: bool = True  # must be false outside development
 
+    # --- Google Play Billing ---
+    google_play_package_name: str = "com.prediqo.app"
+    google_play_service_account_json: str = ""
+    token_unlock_cost: int = 5
+
     @property
     def cors_origin_list(self) -> list[str]:
         return [origin.strip() for origin in self.cors_origins.split(",") if origin.strip()]
