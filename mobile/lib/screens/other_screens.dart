@@ -32,13 +32,13 @@ class PredictionsScreen extends ConsumerWidget {
             itemBuilder: (context, index) {
               final item = items[index];
               final probs = item.probabilitiesBp;
+              final home = probs['home'] ?? 0;
+              final draw = probs['draw'] ?? 0;
+              final away = probs['away'] ?? 0;
               return Card(
                 child: ListTile(
                   title: Text('${item.market} · ${item.selectedOutcome}'),
-                  subtitle: Text(
-                    'H ${probs['home'] ?? 0}%  D ${probs['draw'] ?? 0}%  '
-                    'A ${probs['away'] ?? 0}%',
-                  ),
+                  subtitle: Text('H $home%  D $draw%  A $away%'),
                   trailing: Text(
                     item.isSampleData ? 'DEMO' : item.status,
                     style: const TextStyle(fontSize: 10),
