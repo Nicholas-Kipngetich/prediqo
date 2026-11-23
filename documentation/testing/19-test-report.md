@@ -16,7 +16,7 @@ Scope: all automated suites and live integration checks completed to date.
 | Backend types | `mypy app` | no issues in 53 files |
 | Flutter CI | `flutter analyze`, strict `dart format`, `flutter test` | green on `main` and `develop` |
 | Admin CI | `npm ci && npm run build` | 6 routes compiled |
-| Android release | `flutter build appbundle --release` (tag/dispatch workflow) | ✅ AAB produced (49.5 MB artifact) |
+| Android release | `flutter build appbundle --release` (tag/dispatch workflow) | ✅ AAB produced (52.4 MB artifact with Firebase auth plugins) |
 | Backend CI | tests + lint + format + types + AI tests | green |
 
 Total automated tests: **53 passing** (47 backend + 6 AI-engine), plus 1 Flutter widget

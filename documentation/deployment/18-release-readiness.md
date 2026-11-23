@@ -83,6 +83,7 @@
 | Advertising | Legal/policy review of gambling-adjacent category |
 | Play purchase verification | Service account + sandbox testing |
 | FCM delivery | Firebase project + registered device |
+| Client Firebase auth | Real Firebase project + google-services.json (currently placeholder) |
 | Independent pentest | Budget/scheduling |
 
 ---
