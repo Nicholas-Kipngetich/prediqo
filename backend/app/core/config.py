@@ -29,12 +29,21 @@ class Settings(BaseSettings):
     redis_port: int = 6379
     redis_db: int = 0
 
+    # "firebase" verifies real Firebase ID tokens. "dev" accepts a single
+    # static token and is only honoured when environment == "development".
+    auth_mode: str = "firebase"
+    firebase_project_id: str = ""
+    dev_auth_token: str = "prediqo-dev-token"
+    database_url: str | None = None  # override for tests (e.g. in-memory SQLite)
+
     @property
     def cors_origin_list(self) -> list[str]:
         return [origin.strip() for origin in self.cors_origins.split(",") if origin.strip()]
 
     @property
-    def database_url(self) -> str:
+    def effective_database_url(self) -> str:
+        if self.database_url:
+            return self.database_url
         return (
             f"postgresql://{self.postgres_user}:{self.postgres_password}"
             f"@{self.postgres_host}:{self.postgres_port}/{self.postgres_db}"
@@ -42,7 +51,10 @@ class Settings(BaseSettings):
 
     @property
     def async_database_url(self) -> str:
-        return self.database_url.replace("postgresql://", "postgresql+asyncpg://", 1)
+        url = self.effective_database_url
+        if url.startswith("postgresql://"):
+            return url.replace("postgresql://", "postgresql+asyncpg://", 1)
+        return url
 
     @property
     def redis_url(self) -> str:

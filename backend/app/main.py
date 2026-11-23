@@ -1,12 +1,17 @@
 """Prediqo FastAPI application entry point."""
 
-from fastapi import FastAPI
+import uuid
+
+from fastapi import FastAPI, Request
+from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 
+import app.models as _models  # noqa: F401
 from app import __version__
 from app.api.v1.router import router as api_router
 from app.core.config import settings
+from app.core.errors import AppError, app_error_handler, validation_error_handler
 
 app = FastAPI(
     title="Prediqo API",
@@ -26,6 +31,17 @@ app.add_middleware(
 )
 
 app.include_router(api_router, prefix=settings.api_v1_prefix)
+
+app.add_exception_handler(AppError, app_error_handler)
+app.add_exception_handler(RequestValidationError, validation_error_handler)
+
+
+@app.middleware("http")
+async def request_id_middleware(request: Request, call_next):
+    request.state.request_id = request.headers.get("X-Request-ID") or str(uuid.uuid4())
+    response = await call_next(request)
+    response.headers["X-Request-ID"] = request.state.request_id
+    return response
 
 
 async def _db_status() -> str:

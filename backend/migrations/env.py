@@ -1,20 +1,37 @@
-"""Alembic environment. Database URL is taken from Prediqo settings, not alembic.ini."""
+"""Alembic environment. Database URL comes from Prediqo settings, not alembic.ini.
 
+Supports both sync and async SQLAlchemy drivers so migrations work against
+PostgreSQL (asyncpg) in deployment and SQLite (aiosqlite) in local development.
+"""
+
+import asyncio
 from logging.config import fileConfig
 
 from alembic import context
 from sqlalchemy import engine_from_config, pool
+from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from app.core.config import settings
 from app.core.database import Base
 
 config = context.config
-config.set_main_option("sqlalchemy.url", settings.database_url)
+config.set_main_option("sqlalchemy.url", settings.effective_database_url)
 
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
 target_metadata = Base.metadata
+
+
+def _run_migrations(connection) -> None:
+    context.configure(
+        connection=connection,
+        target_metadata=target_metadata,
+        compare_type=True,
+        render_as_batch=connection.dialect.name == "sqlite",
+    )
+    with context.begin_transaction():
+        context.run_migrations()
 
 
 def run_migrations_offline() -> None:
@@ -30,19 +47,22 @@ def run_migrations_offline() -> None:
 
 
 def run_migrations_online() -> None:
-    connectable = engine_from_config(
-        config.get_section(config.config_ini_section, {}),
-        prefix="sqlalchemy.",
-        poolclass=pool.NullPool,
-    )
-    with connectable.connect() as connection:
-        context.configure(
-            connection=connection,
-            target_metadata=target_metadata,
-            compare_type=True,
-        )
-        with context.begin_transaction():
-            context.run_migrations()
+    section = config.get_section(config.config_ini_section, {})
+    url = settings.effective_database_url
+    if url.startswith(("sqlite+aiosqlite", "postgresql+asyncpg")):
+
+        async def run() -> None:
+            connectable = async_engine_from_config(section, prefix="sqlalchemy.", poolclass=pool.NullPool)
+            async with connectable.connect() as connection:
+                await connection.run_sync(_run_migrations)
+            await connectable.dispose()
+
+        asyncio.run(run())
+    else:
+        connectable = engine_from_config(section, prefix="sqlalchemy.", poolclass=pool.NullPool)
+        with connectable.connect() as connection:
+            _run_migrations(connection)
+        connectable.dispose()
 
 
 if context.is_offline_mode():
