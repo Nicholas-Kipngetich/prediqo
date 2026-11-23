@@ -131,6 +131,20 @@ Pages: Overview, Users, Predictions (with sync/generate/settle actions), Monetiz
 and System (health + audit log). The dashboard calls the same backend with the dev
 token and renders real data.
 
+### Phase 10 notifications
+
+```powershell
+Invoke-RestMethod 'http://127.0.0.1:8000/api/v1/notifications/preferences' -Headers $h
+Invoke-RestMethod -Method Post 'http://127.0.0.1:8000/api/v1/notifications/test' -Headers $h
+Invoke-RestMethod 'http://127.0.0.1:8000/api/v1/notifications' -Headers $h
+Invoke-RestMethod -Method Post `
+  'http://127.0.0.1:8000/api/v1/notifications/admin/generate' -Headers $h
+```
+
+In dev mode, FCM delivery is simulated and recorded as `SENT`. Outside development,
+Firebase Admin SDK sends multicast messages to registered device tokens. All notices
+are deduplicated by `dedupe_key` and respect saved preferences.
+
 ### Starting it yourself
 
 ```powershell
