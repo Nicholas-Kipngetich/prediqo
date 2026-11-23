@@ -1,0 +1,75 @@
+# Prediqo — gitignore
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Node / Next.js admin dashboard
+node_modules/
+.next/
+out/
+dist/
+build/
+*.tsbuildinfo
+npm-debug.log*
+
+# Flutter / Dart
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+build/
+*.iml
+.idea/
+android/.gradle/
+android/local.properties
+android/key.properties
+android/app/release/
+ios/.symlinks/
+coverage/
+
+# Environment & secrets — NEVER commit real credentials
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.jks
+google-services.json
+GoogleService-Info.plist
+service-account*.json
+
+# Databases / storage
+*.db
+*.sqlite
+*.sqlite3
+postgres_data/
+redis_data/
+mlruns/
+mlartifacts/
+model_artifacts/
+
+# IDE / OS
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Docker
+.dockerignore
