@@ -89,7 +89,7 @@ class MatchDetailScreen extends ConsumerWidget {
                 ),
               ),
             ),
-            SectionHeader(title: 'Result Probabilities'),
+            const SectionHeader(title: 'Result Probabilities'),
             const EmptyState(
               title: 'Analysis in development',
               message: 'Probabilities are published only after the statistical '

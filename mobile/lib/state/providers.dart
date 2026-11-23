@@ -5,7 +5,7 @@ import '../data/models.dart';
 
 enum FixtureScope { scheduled, finished, trending }
 
-final fixtureScopeProvider = Provider<FixtureScope>((ref) {
+final fixtureScopeProvider = StateProvider<FixtureScope>((ref) {
   return FixtureScope.scheduled;
 });
 

@@ -32,7 +32,7 @@ class AppScaffold extends StatelessWidget {
       body: SafeArea(child: body),
       bottomNavigationBar: NavigationBar(
         selectedIndex: selectedIndex,
-        onDestinationChanged: (index) => _navigate(context, index),
+        onDestinationSelected: (index) => _navigate(context, index),
         destinations: const [
           NavigationDestination(
             icon: Icon(Icons.home_outlined),
