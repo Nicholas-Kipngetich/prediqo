@@ -64,6 +64,22 @@ Switching to a licensed real provider requires `FOOTBALL_DATA_PROVIDER=api-footb
 and `FOOTBALL_DATA_API_KEY`. The adapter refuses to start without the key and never
 falls back to sample data silently.
 
+### Phase 5 predictions
+
+```powershell
+# Publish predictions (admin token required)
+Invoke-RestMethod -Method Post `
+  -Uri http://127.0.0.1:8000/api/v1/predictions/generate -Headers $h
+# => {"published":28,"skipped":0,"suppressed":0}
+
+Invoke-RestMethod 'http://127.0.0.1:8000/api/v1/predictions?market=1X2'
+```
+
+Every prediction carries a model version, data-as-of timestamp, immutable snapshot,
+deterministic explanation and `is_sample_data: true`. Probabilities are integer basis
+points summing to 10,000. XGBoost is intentionally deferred until real historical data
+is licensed and validation thresholds can be set — see the Phase 0 AI/ML decision.
+
 ### Starting it yourself
 
 ```powershell
