@@ -181,9 +181,7 @@ async def create_upcoming_fixture_notifications(session: AsyncSession) -> int:
         for fixture in fixtures:
             key = f"fixture:{fixture.id}:user:{pref.user_id}"
             exists = (
-                await session.execute(
-                    select(Notification.id).where(Notification.dedupe_key == key)
-                )
+                await session.execute(select(Notification.id).where(Notification.dedupe_key == key))
             ).first()
             await create_notification(
                 session,
