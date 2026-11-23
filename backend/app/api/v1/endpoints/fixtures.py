@@ -1,5 +1,6 @@
 """Fixture discovery endpoints."""
 
+import json
 from datetime import UTC, datetime
 from uuid import UUID
 
@@ -7,9 +8,14 @@ from fastapi import APIRouter, Depends, Query
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.api.deps import get_current_user
 from app.core.database import get_session
+from app.core.errors import NotFoundError
+from app.models.identity import User
+from app.models.predictions import Prediction, PredictionMarket
 from app.models.sports import Competition, Fixture, Team
-from app.schemas.sports import CompetitionOut, FixtureOut, Page, TeamOut
+from app.schemas.sports import AnalysisOut, CompetitionOut, FixtureOut, Page, TeamOut
+from app.services.analysis_service import check_analysis_access
 
 router = APIRouter(tags=["fixtures"])
 
@@ -129,6 +135,66 @@ async def trending_fixtures(
         if competition and home and away:
             items.append(_fixture_to_out(fixture, competition, home, away))
     return Page(items=items, page=page, page_size=page_size, total=total)
+
+
+@router.get("/fixtures/{fixture_id}/analysis", response_model=AnalysisOut)
+async def get_fixture_analysis(
+    fixture_id: str,
+    user: User = Depends(get_current_user),
+    session: AsyncSession = Depends(get_session),
+) -> AnalysisOut:
+    fixture = await session.get(Fixture, UUID(fixture_id))
+    if fixture is None:
+        raise NotFoundError("Fixture not found.")
+
+    entitlement = await check_analysis_access(session, user, fixture.id)
+    competition = await session.get(Competition, fixture.competition_id)
+    home = await session.get(Team, fixture.home_team_id)
+    away = await session.get(Team, fixture.away_team_id)
+    if not (competition and home and away):
+        raise NotFoundError("Fixture references missing data.")
+
+    rows = (
+        await session.execute(
+            select(Prediction, PredictionMarket.code, PredictionMarket.name)
+            .join(PredictionMarket, PredictionMarket.id == Prediction.market_id)
+            .where(Prediction.fixture_id == fixture.id)
+            .order_by(Prediction.published_at.desc())
+        )
+    ).all()
+
+    markets: dict[str, dict] = {}
+    snapshot: dict = {}
+    explanation: dict = {}
+    data_as_of = None
+    for prediction, code, name in rows:
+        if code not in markets:
+            markets[code] = {
+                "name": name,
+                "probabilities_bp": json.loads(prediction.probabilities_json),
+                "selected_outcome": prediction.selected_outcome,
+                "published_at": prediction.published_at.isoformat(),
+            }
+            if not snapshot:
+                snapshot = json.loads(prediction.snapshot_json)
+                explanation = json.loads(prediction.explanation_json)
+                data_as_of = prediction.data_as_of
+
+    return AnalysisOut(
+        fixture_id=fixture.id,
+        competition=CompetitionOut.model_validate(competition),
+        home_team=TeamOut.model_validate(home),
+        away_team=TeamOut.model_validate(away),
+        kickoff_utc=fixture.kickoff_utc,
+        status=fixture.status,
+        is_sample_data=fixture.is_sample_data,
+        entitlement=entitlement,
+        data_as_of=data_as_of,
+        expected_home_goals=snapshot.get("expected_home_goals"),
+        expected_away_goals=snapshot.get("expected_away_goals"),
+        markets=markets,
+        explanation=explanation,
+    )
 
 
 @router.get("/fixtures/{fixture_id}", response_model=FixtureOut)

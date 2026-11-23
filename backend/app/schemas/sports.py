@@ -3,7 +3,7 @@
 from datetime import datetime
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class CompetitionOut(BaseModel):
@@ -48,6 +48,22 @@ class Page[T](BaseModel):
     page: int
     page_size: int
     total: int
+
+
+class AnalysisOut(BaseModel):
+    fixture_id: UUID
+    competition: CompetitionOut
+    home_team: TeamOut
+    away_team: TeamOut
+    kickoff_utc: datetime
+    status: str
+    is_sample_data: bool = False
+    entitlement: str
+    data_as_of: datetime | None = None
+    expected_home_goals: float | None = None
+    expected_away_goals: float | None = None
+    markets: dict[str, dict] = Field(default_factory=dict)
+    explanation: dict[str, object] = Field(default_factory=dict)
 
 
 class SyncResultOut(BaseModel):

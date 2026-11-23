@@ -46,6 +46,8 @@ class Settings(BaseSettings):
     google_play_package_name: str = "com.prediqo.app"
     google_play_service_account_json: str = ""
     token_unlock_cost: int = 5
+    free_daily_analysis: int = 1
+    vip_daily_analysis: int = 100
 
     @property
     def cors_origin_list(self) -> list[str]:

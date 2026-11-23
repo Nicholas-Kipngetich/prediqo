@@ -51,6 +51,12 @@ class ConflictError(AppError):
     message = "The request conflicts with existing state."
 
 
+class EntitlementError(AppError):
+    status_code = 403
+    code = "ENTITLEMENT_REQUIRED"
+    message = "This analysis requires VIP access or a token unlock."
+
+
 def _envelope(code: str, message: str, details: dict[str, Any], request: Request) -> dict:
     return {
         "error": {
