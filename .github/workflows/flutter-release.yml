@@ -37,6 +37,17 @@ jobs:
       - name: Provide Firebase Android config
         run: cp android/app/google-services.example.json android/app/google-services.json
 
+      - name: Disable release lint task
+        # AGP 8 lint crashes while analysing firebase_core sources on this runner.
+        # checkReleaseBuilds=false skips that non-essential analysis task.
+        run: |
+          python3 -c "
+          p = 'android/app/build.gradle'
+          s = open(p).read()
+          s = s.replace('android {', 'android {\n    lint { checkReleaseBuilds false }', 1)
+          open(p, 'w').write(s)
+          "
+
       - name: Install dependencies
         run: flutter pub get
 
