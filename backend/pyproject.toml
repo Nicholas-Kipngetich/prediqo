@@ -19,6 +19,7 @@ dependencies = [
   "celery>=5.4.0",
   "firebase-admin>=6.5.0",
   "httpx>=0.27.0",
+  "prediqo-ai @ file:../ai-engine",
 ]
 
 [project.optional-dependencies]

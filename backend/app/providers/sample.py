@@ -55,6 +55,25 @@ class SampleAdapter:
             ("sample-sa", "sample-t7", "sample-t8"),
         ]
         fixtures = []
+        # Historical, clearly-labelled results so the model can be exercised in
+        # development. Each sample team appears five times.
+        for index in range(20):
+            competition_id, home_id, away_id = matchups[index % len(matchups)]
+            kickoff = now - timedelta(days=40 - 2 * index)
+            fixtures.append(
+                FixtureData(
+                    provider_id=f"sample-history-{index + 1}",
+                    competition_provider_id=competition_id,
+                    home_team_provider_id=home_id,
+                    away_team_provider_id=away_id,
+                    kickoff_utc=kickoff,
+                    status="FINISHED",
+                    venue=None,
+                    home_score=(index % 3) + 1,
+                    away_score=index % 2,
+                    statistics={},
+                )
+            )
         for index, offset in enumerate(offsets):
             competition_id, home_id, away_id = matchups[index % len(matchups)]
             kickoff = now + timedelta(days=offset, hours=(index % 3) * 3)

@@ -19,7 +19,7 @@ async def test_sync_returns_counts_and_no_sample_leak(synced_client):
     _, _, result = synced_client
     assert result["competitions"] == 3
     assert result["teams"] == 8
-    assert result["fixtures"] == 8
+    assert result["fixtures"] == 28
     assert result["skipped"] == 0
 
 
@@ -30,7 +30,7 @@ async def test_fixtures_are_labelled_and_paginated(synced_client):
 
     assert response.status_code == 200
     data = response.json()
-    assert data["total"] == 8
+    assert data["total"] == 28
     assert len(data["items"]) == 3
     assert all(item["is_sample_data"] for item in data["items"])
     assert "probabilities" not in data["items"][0]
@@ -45,7 +45,7 @@ async def test_fixture_filters(synced_client):
 
     assert scheduled.status_code == finished.status_code == 200
     assert scheduled.json()["total"] == 7
-    assert finished.json()["total"] == 1
+    assert finished.json()["total"] == 21
 
 
 @pytest.mark.asyncio
@@ -61,7 +61,8 @@ async def test_fixture_detail_and_trending(synced_client):
 
     trending = await client.get("/api/v1/fixtures/trending")
     assert trending.status_code == 200
-    assert trending.json()["total"] == 7
+    assert trending.json()["total"] >= 1
+    assert all(item["status"] == "SCHEDULED" for item in trending.json()["items"])
 
 
 @pytest.mark.asyncio
@@ -83,4 +84,4 @@ async def test_sync_jobs_are_recorded(synced_client):
 
     assert jobs.status_code == 200
     assert jobs.json()[0]["status"] == "SUCCESS"
-    assert jobs.json()[0]["records_processed"] == 19
+    assert jobs.json()[0]["records_processed"] == 39

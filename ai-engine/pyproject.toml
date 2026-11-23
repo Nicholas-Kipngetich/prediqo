@@ -1,16 +1,21 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
 [project]
-name = "prediqo-ai-engine"
+name = "prediqo-ai"
 version = "0.1.0"
 description = "Prediqo statistical and machine-learning prediction engine"
 requires-python = ">=3.12"
-dependencies = [
-  "numpy>=2.1.0",
-  "pandas>=2.2.0",
-  "scipy>=1.14.0",
-  "scikit-learn>=1.5.0",
-  "xgboost>=2.1.0",
-  "mlflow>=2.16.0",
-]
 
 [project.optional-dependencies]
 dev = ["pytest>=8.3.0", "ruff>=0.8.0"]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["prediqo_ai*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "session"

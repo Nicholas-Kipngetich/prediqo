@@ -30,3 +30,5 @@ jobs:
         run: mypy app
       - name: Tests
         run: pytest -v
+      - name: AI engine tests
+        run: python -m pytest -q ../ai-engine/tests
