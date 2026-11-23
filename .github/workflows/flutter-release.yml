@@ -45,7 +45,7 @@ jobs:
 
       - name: Build release App Bundle
         run: |
-          flutter build appbundle --release \
+          flutter build appbundle --release --no-shrink \
             --dart-define=API_BASE_URL=${{ inputs.api_base_url || secrets.API_BASE_URL || 'https://api.prediqo.app' }}
 
       - name: Upload App Bundle
