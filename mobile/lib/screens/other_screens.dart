@@ -7,20 +7,52 @@ import '../theme/app_theme.dart';
 import '../widgets/app_scaffold.dart';
 import '../widgets/design_system.dart';
 
-class PredictionsScreen extends StatelessWidget {
+class PredictionsScreen extends ConsumerWidget {
   const PredictionsScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return const AppScaffold(
+  Widget build(BuildContext context, WidgetRef ref) {
+    final predictions = ref.watch(predictionsProvider('1X2'));
+
+    return AppScaffold(
       title: 'Predictions',
       selectedIndex: 2,
-      body: EmptyState(
-        title: 'No predictions published yet',
-        message:
-            'Predictions appear here after validated models are deployed in '
-            'Phase 5. Nothing is shown before it can be verified.',
-        icon: Icons.insights_outlined,
+      body: predictions.when(
+        data: (items) {
+          if (items.isEmpty) {
+            return const EmptyState(
+              title: 'No predictions published yet',
+              message: 'Run prediction generation from the admin API to publish '
+                  'the first validated predictions.',
+              icon: Icons.insights_outlined,
+            );
+          }
+          return ListView.builder(
+            itemCount: items.length,
+            itemBuilder: (context, index) {
+              final item = items[index];
+              final probs = item.probabilitiesBp;
+              return Card(
+                child: ListTile(
+                  title: Text('${item.market} · ${item.selectedOutcome}'),
+                  subtitle: Text(
+                    'H ${probs['home'] ?? 0}%  D ${probs['draw'] ?? 0}%  '
+                    'A ${probs['away'] ?? 0}%',
+                  ),
+                  trailing: Text(
+                    item.isSampleData ? 'DEMO' : item.status,
+                    style: const TextStyle(fontSize: 10),
+                  ),
+                ),
+              );
+            },
+          );
+        },
+        loading: () => const LoadingState(),
+        error: (error, _) => ErrorState(
+          error: error,
+          onRetry: () => ref.invalidate(predictionsProvider('1X2')),
+        ),
       ),
     );
   }

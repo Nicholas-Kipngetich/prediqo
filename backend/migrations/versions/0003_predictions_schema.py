@@ -84,15 +84,15 @@ def upgrade() -> None:
         sa.text(
             "INSERT INTO model_versions "
             "(id, name, version, feature_version, status, metrics_json) VALUES "
-            "('b0000000-0000-0000-0000-000000000001', 'poisson-elo-ensemble', "
+            "('b0000000000000000000000000000001', 'poisson-elo-ensemble', "
             "'v1.0.0', 'v1', 'CHAMPION', '{\"validation\": \"pending\"}')"
         )
     )
     for market_id, code, name, group in [
-        ("c0000000-0000-0000-0000-000000000001", "1X2", "Match Result", "result"),
-        ("c0000000-0000-0000-0000-000000000002", "OU25", "Over/Under 2.5 Goals", "goals"),
-        ("c0000000-0000-0000-0000-000000000003", "BTTS", "Both Teams to Score", "goals"),
-        ("c0000000-0000-0000-0000-000000000004", "CS", "Correct Score", "goals"),
+        ("c0000000000000000000000000000001", "1X2", "Match Result", "result"),
+        ("c0000000000000000000000000000002", "OU25", "Over/Under 2.5 Goals", "goals"),
+        ("c0000000000000000000000000000003", "BTTS", "Both Teams to Score", "goals"),
+        ("c0000000000000000000000000000004", "CS", "Correct Score", "goals"),
     ]:
         op.execute(
             sa.text(

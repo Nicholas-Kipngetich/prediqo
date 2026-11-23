@@ -132,6 +132,44 @@ class FixturePage {
   }
 }
 
+class PredictionModel {
+  final String id;
+  final String fixtureId;
+  final String market;
+  final String modelVersion;
+  final Map<String, int> probabilitiesBp;
+  final String selectedOutcome;
+  final String status;
+  final bool isSampleData;
+
+  PredictionModel({
+    required this.id,
+    required this.fixtureId,
+    required this.market,
+    required this.modelVersion,
+    required this.probabilitiesBp,
+    required this.selectedOutcome,
+    required this.status,
+    required this.isSampleData,
+  });
+
+  factory PredictionModel.fromJson(Map<String, dynamic> json) {
+    final raw = json['probabilities_bp'] as Map<String, dynamic>? ?? {};
+    return PredictionModel(
+      id: json['id'] as String,
+      fixtureId: json['fixture_id'] as String,
+      market: json['market'] as String,
+      modelVersion: json['model_version'] as String,
+      probabilitiesBp: raw.map(
+        (key, value) => MapEntry(key, (value as num).toInt()),
+      ),
+      selectedOutcome: json['selected_outcome'] as String,
+      status: json['status'] as String,
+      isSampleData: json['is_sample_data'] as bool? ?? false,
+    );
+  }
+}
+
 class UserModel {
   final String id;
   final String? email;

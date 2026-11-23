@@ -65,6 +65,17 @@ class FixturesRepository {
     return FixtureModel.fromJson(response.data ?? {});
   }
 
+  Future<List<PredictionModel>> fetchPredictions(String market) async {
+    final response = await _dio.get<List<dynamic>>(
+      '/api/v1/predictions',
+      queryParameters: {'market': market},
+    );
+    final raw = response.data ?? [];
+    return raw
+        .map((item) => PredictionModel.fromJson(item as Map<String, dynamic>))
+        .toList();
+  }
+
   Future<UserModel?> fetchCurrentUser() async {
     try {
       final response = await _dio.post<Map<String, dynamic>>(

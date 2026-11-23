@@ -139,7 +139,7 @@ def upgrade() -> None:
     op.execute(
         sa.text(
             "INSERT INTO sports (id, code, name) VALUES "
-            "('a0000000-0000-0000-0000-000000000001', 'football', 'Football')"
+            "('a0000000000000000000000000000001', 'football', 'Football')"
         )
     )
 
