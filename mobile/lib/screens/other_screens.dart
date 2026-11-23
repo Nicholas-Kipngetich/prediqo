@@ -22,7 +22,8 @@ class PredictionsScreen extends ConsumerWidget {
           if (items.isEmpty) {
             return const EmptyState(
               title: 'No predictions published yet',
-              message: 'Run prediction generation from the admin API to publish '
+              message:
+                  'Run prediction generation from the admin API to publish '
                   'the first validated predictions.',
               icon: Icons.insights_outlined,
             );
