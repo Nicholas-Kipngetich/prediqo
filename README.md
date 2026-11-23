@@ -17,7 +17,8 @@ Repository: https://github.com/Nicholas-Kipngetich/prediqo.git
 | 0 — Product discovery & architecture | ✅ Complete (`documentation/`) |
 | 1 — Project foundation | ✅ Scaffolded and verified |
 | 2 — Backend & authentication | ✅ Complete (16 tests, CI green) |
-| 3–12 | ⏳ Not started |
+| 3 — Sports data integration | 🚧 Complete locally (22 tests); provider licence decision pending |
+| 4–12 | ⏳ Not started |
 
 ### Phase 1 verification results (2026-11-23)
 

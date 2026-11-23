@@ -46,6 +46,24 @@ Invoke-RestMethod http://127.0.0.1:8000/api/v1/auth/permissions -Headers $h
 Invoke-RestMethod http://127.0.0.1:8000/api/v1/admin/ping -Headers $h
 ```
 
+### Phase 3 fixtures
+
+The dev database is synchronised with a **clearly labelled sample adapter**
+(`FOOTBALL_DATA_PROVIDER=sample`). Every record has `is_sample_data: true` and there
+are no probabilities, statistics or corner values. To populate it:
+
+```powershell
+# The dev user has already been granted ADMIN locally
+Invoke-RestMethod -Method Post `
+  -Uri http://127.0.0.1:8000/api/v1/admin/sync/trigger -Headers $h
+Invoke-RestMethod 'http://127.0.0.1:8000/api/v1/fixtures?page_size=3'
+Invoke-RestMethod 'http://127.0.0.1:8000/api/v1/fixtures/trending'
+```
+
+Switching to a licensed real provider requires `FOOTBALL_DATA_PROVIDER=api-football`
+and `FOOTBALL_DATA_API_KEY`. The adapter refuses to start without the key and never
+falls back to sample data silently.
+
 ### Starting it yourself
 
 ```powershell

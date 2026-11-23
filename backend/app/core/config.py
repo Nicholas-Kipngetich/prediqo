@@ -36,6 +36,12 @@ class Settings(BaseSettings):
     dev_auth_token: str = "prediqo-dev-token"
     database_url: str | None = None  # override for tests (e.g. in-memory SQLite)
 
+    # --- Sports data provider ---
+    football_data_provider: str = "sample"  # "sample" (dev only) or "api-football"
+    football_data_api_key: str = ""
+    football_data_base_url: str = "https://v3.football.api-sports.io"
+    allow_sample_data: bool = True  # must be false outside development
+
     @property
     def cors_origin_list(self) -> list[str]:
         return [origin.strip() for origin in self.cors_origins.split(",") if origin.strip()]
