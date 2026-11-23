@@ -76,6 +76,14 @@ class FixturesRepository {
         .toList();
   }
 
+  Future<List<NotificationModel>> fetchNotifications() async {
+    final response = await _dio.get<List<dynamic>>('/api/v1/notifications');
+    final raw = response.data ?? [];
+    return raw
+        .map((item) => NotificationModel.fromJson(item as Map<String, dynamic>))
+        .toList();
+  }
+
   Future<TokenBalanceModel> fetchTokenBalance() async {
     final response =
         await _dio.get<Map<String, dynamic>>('/api/v1/tokens/balance');

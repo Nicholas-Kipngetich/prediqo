@@ -332,18 +332,50 @@ class TokenStoreScreen extends ConsumerWidget {
   }
 }
 
-class NotificationsScreen extends StatelessWidget {
+class NotificationsScreen extends ConsumerWidget {
   const NotificationsScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return const AppScaffold(
+  Widget build(BuildContext context, WidgetRef ref) {
+    final notifications = ref.watch(notificationsProvider);
+
+    return AppScaffold(
       title: 'Notifications',
       selectedIndex: 0,
-      body: EmptyState(
-        title: 'No notifications',
-        message: 'Match reminders and daily insights arrive in Phase 10.',
-        icon: Icons.notifications_none,
+      body: notifications.when(
+        data: (items) {
+          if (items.isEmpty) {
+            return const EmptyState(
+              title: 'No notifications',
+              message: 'Match reminders and daily insights will appear here.',
+              icon: Icons.notifications_none,
+            );
+          }
+          return ListView.builder(
+            itemCount: items.length,
+            itemBuilder: (context, index) {
+              final item = items[index];
+              return Card(
+                child: ListTile(
+                  leading: Icon(
+                    item.isRead
+                        ? Icons.notifications_none
+                        : Icons.notifications_active,
+                    color: item.isRead ? AppColors.textSecondary : AppColors.primary,
+                  ),
+                  title: Text(item.title),
+                  subtitle: Text(item.body),
+                  trailing: Text(item.type),
+                ),
+              );
+            },
+          );
+        },
+        loading: () => const LoadingState(),
+        error: (error, _) => ErrorState(
+          error: error,
+          onRetry: () => ref.invalidate(notificationsProvider),
+        ),
       ),
     );
   }

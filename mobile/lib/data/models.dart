@@ -132,6 +132,41 @@ class FixturePage {
   }
 }
 
+class NotificationModel {
+  final String id;
+  final String type;
+  final String title;
+  final String body;
+  final String status;
+  final DateTime? readAt;
+  final DateTime createdAt;
+
+  NotificationModel({
+    required this.id,
+    required this.type,
+    required this.title,
+    required this.body,
+    required this.status,
+    required this.readAt,
+    required this.createdAt,
+  });
+
+  factory NotificationModel.fromJson(Map<String, dynamic> json) {
+    final rawRead = json['read_at'];
+    return NotificationModel(
+      id: json['id'] as String,
+      type: json['type'] as String,
+      title: json['title'] as String,
+      body: json['body'] as String,
+      status: json['status'] as String,
+      readAt: rawRead == null ? null : DateTime.parse(rawRead as String),
+      createdAt: DateTime.parse(json['created_at'] as String),
+    );
+  }
+
+  bool get isRead => readAt != null;
+}
+
 class TokenPackageModel {
   final String id;
   final String name;
