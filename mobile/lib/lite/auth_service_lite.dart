@@ -9,9 +9,8 @@ import '../data/models.dart';
 /// Uses the backend's development email/password endpoints instead of Firebase
 /// native plugins. Tokens are signed by the backend and attached to API calls.
 class AuthService {
-  AuthService(this._ref);
+  AuthService();
 
-  final Ref _ref;
   String? _token;
 
   late final Dio _dio = Dio(
@@ -71,5 +70,5 @@ class AuthService {
 }
 
 final authServiceProvider = Provider<AuthService>((ref) {
-  return AuthService(ref);
+  return AuthService();
 });
