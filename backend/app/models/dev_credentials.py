@@ -22,6 +22,10 @@ class DevCredential(Base):
         DateTime(timezone=True), nullable=True
     )
     verified_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    reset_code_hash: Mapped[str | None] = mapped_column(String(128), nullable=True)
+    reset_expires_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )

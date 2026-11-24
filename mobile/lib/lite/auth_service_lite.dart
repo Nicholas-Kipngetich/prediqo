@@ -99,6 +99,34 @@ class AuthService {
     return _token ?? '';
   }
 
+  Future<String> requestPasswordReset({String? email, String? phone}) async {
+    final response = await _dio.post<Map<String, dynamic>>(
+      '/api/v1/auth/forgot-password',
+      data: {
+        if (email != null) 'email': email.trim(),
+        if (phone != null) 'phone': phone.trim(),
+      },
+    );
+    return response.data?['verification_code'] as String? ?? '';
+  }
+
+  Future<void> resetPassword({
+    String? email,
+    String? phone,
+    required String code,
+    required String newPassword,
+  }) async {
+    await _dio.post<Map<String, dynamic>>(
+      '/api/v1/auth/reset-password',
+      data: {
+        if (email != null) 'email': email.trim(),
+        if (phone != null) 'phone': phone.trim(),
+        'code': code.trim(),
+        'new_password': newPassword,
+      },
+    );
+  }
+
   Future<void> sendPasswordReset(String email) async {}
 
   Future<Object?> signInWithGoogle() async => null;

@@ -58,6 +58,22 @@ class AuthService {
     return _auth.sendPasswordResetEmail(email: email.trim());
   }
 
+  Future<String> requestPasswordReset({String? email, String? phone}) async {
+    if (email != null) {
+      await _auth.sendPasswordResetEmail(email: email.trim());
+    }
+    return '';
+  }
+
+  Future<void> resetPassword({
+    String? email,
+    String? phone,
+    required String code,
+    required String newPassword,
+  }) async {
+    await _auth.confirmPasswordReset(code: code, newPassword: newPassword);
+  }
+
   Future<UserCredential?> signInWithGoogle() async {
     final GoogleSignInAccount? account = await GoogleSignIn().signIn();
     if (account == null) return null;

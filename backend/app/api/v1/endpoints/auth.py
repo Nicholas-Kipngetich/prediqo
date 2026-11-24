@@ -32,6 +32,18 @@ class ResendCodeIn(BaseModel):
     phone: str | None = Field(default=None, max_length=32)
 
 
+class ForgotPasswordIn(BaseModel):
+    email: str | None = Field(default=None, max_length=320)
+    phone: str | None = Field(default=None, max_length=32)
+
+
+class ResetPasswordIn(BaseModel):
+    email: str | None = Field(default=None, max_length=320)
+    phone: str | None = Field(default=None, max_length=32)
+    code: str = Field(min_length=4, max_length=12)
+    new_password: str = Field(min_length=6, max_length=128)
+
+
 class DevTokenOut(BaseModel):
     access_token: str
     token_type: str = "Bearer"
@@ -95,6 +107,33 @@ async def dev_resend_code(
         "message": "Verification code sent.",
         "verification_code": code if dev_auth_service._dev_mode() else None,
     }
+
+
+@router.post("/forgot-password")
+async def dev_forgot_password(
+    payload: ForgotPasswordIn,
+    session: AsyncSession = Depends(get_session),
+) -> dict:
+    code = await dev_auth_service.request_password_reset(session, payload.email, payload.phone)
+    return {
+        "message": "Password reset code sent.",
+        "verification_code": code if dev_auth_service._dev_mode() else None,
+    }
+
+
+@router.post("/reset-password")
+async def dev_reset_password(
+    payload: ResetPasswordIn,
+    session: AsyncSession = Depends(get_session),
+) -> dict:
+    await dev_auth_service.confirm_password_reset(
+        session,
+        payload.email,
+        payload.phone,
+        payload.code,
+        payload.new_password,
+    )
+    return {"message": "Password updated. You can now sign in."}
 
 
 @router.post("/login", response_model=DevTokenOut)

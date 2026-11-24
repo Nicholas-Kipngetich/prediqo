@@ -8,6 +8,7 @@ import '../screens/matches_screen.dart';
 import '../screens/other_screens.dart';
 import '../screens/search_screen.dart';
 import '../screens/prediction_history_screen.dart';
+import '../screens/reset_password_screen.dart';
 import '../screens/onboarding_screen.dart';
 import '../screens/settings_screen.dart';
 import '../screens/splash_screen.dart';
@@ -27,6 +28,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/auth',
         builder: (context, state) => const AuthScreen(),
+      ),
+      GoRoute(
+        path: '/reset-password',
+        builder: (context, state) => const ResetPasswordScreen(),
       ),
       GoRoute(
         path: '/home',

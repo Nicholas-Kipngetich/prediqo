@@ -216,3 +216,69 @@ async def login(
     if not hmac.compare_digest(credential.password_hash, _hash_password(password, credential.salt)):
         raise UnauthorizedError("Invalid email or password.")
     return user, create_token(firebase_uid)
+
+
+async def request_password_reset(
+    session: AsyncSession, email: str | None, phone: str | None
+) -> str:
+    if not _dev_mode():
+        raise ConflictError("Development authentication is disabled.")
+    identifier = _normalise_identifier(email, phone)
+    firebase_uid = _firebase_uid(identifier)
+    user = (
+        await session.execute(select(User).where(User.firebase_uid == firebase_uid))
+    ).scalar_one_or_none()
+    if user is None:
+        raise UnauthorizedError("Account not found.")
+    credential = await session.get(DevCredential, user.id)
+    if credential is None:
+        raise UnauthorizedError("Account not found.")
+    code = f"{secrets.randbelow(900000) + 100000:06d}"
+    salt = credential.salt
+    credential.reset_code_hash = _hash_password(code, salt)
+    credential.reset_expires_at = datetime.now(UTC) + timedelta(
+        minutes=settings.dev_verification_code_ttl_minutes
+    )
+    await session.commit()
+    if email:
+        from app.services.mail_service import send_verification_code
+
+        send_verification_code(email.strip().lower(), code)
+    return code
+
+
+async def confirm_password_reset(
+    session: AsyncSession,
+    email: str | None,
+    phone: str | None,
+    code: str,
+    new_password: str,
+) -> None:
+    if not _dev_mode():
+        raise ConflictError("Development authentication is disabled.")
+    if len(new_password) < 6:
+        raise ConflictError("Password must be at least 6 characters.")
+    identifier = _normalise_identifier(email, phone)
+    firebase_uid = _firebase_uid(identifier)
+    user = (
+        await session.execute(select(User).where(User.firebase_uid == firebase_uid))
+    ).scalar_one_or_none()
+    if user is None:
+        raise UnauthorizedError("Account not found.")
+    credential = await session.get(DevCredential, user.id)
+    if credential is None or credential.reset_code_hash is None:
+        raise UnauthorizedError("Invalid reset code.")
+    if credential.reset_expires_at is not None:
+        expires = credential.reset_expires_at
+        if expires.tzinfo is None:
+            expires = expires.replace(tzinfo=UTC)
+        if expires < datetime.now(UTC):
+            raise UnauthorizedError("Reset code has expired.")
+    if not hmac.compare_digest(credential.reset_code_hash, _hash_password(code, credential.salt)):
+        raise UnauthorizedError("Invalid reset code.")
+    salt = secrets.token_hex(16)
+    credential.salt = salt
+    credential.password_hash = _hash_password(new_password, salt)
+    credential.reset_code_hash = None
+    credential.reset_expires_at = None
+    await session.commit()
