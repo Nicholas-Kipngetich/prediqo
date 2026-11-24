@@ -1,12 +1,29 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../core/app_config.dart';
 
 class AuthService {
   AuthService();
 
+  static const _tokenKey = 'prediqo_dev_token';
+
   String? _token;
+
+  Future<void> init() async {
+    final prefs = await SharedPreferences.getInstance();
+    _token = prefs.getString(_tokenKey);
+  }
+
+  Future<void> _persist() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (_token == null) {
+      await prefs.remove(_tokenKey);
+    } else {
+      await prefs.setString(_tokenKey, _token!);
+    }
+  }
 
   late final Dio _dio = Dio(
     BaseOptions(
@@ -41,6 +58,7 @@ class AuthService {
       },
     );
     _token = response.data?['access_token'] as String?;
+    await _persist();
     final code = response.data?['verification_code'] as String?;
     return code ?? '';
   }
@@ -59,6 +77,7 @@ class AuthService {
       },
     );
     _token = response.data?['access_token'] as String?;
+    await _persist();
     return _token ?? '';
   }
 
@@ -76,6 +95,7 @@ class AuthService {
       },
     );
     _token = response.data?['access_token'] as String?;
+    await _persist();
     return _token ?? '';
   }
 
@@ -85,6 +105,7 @@ class AuthService {
 
   Future<void> signOut() async {
     _token = null;
+    await _persist();
   }
 
   Future<void> deleteAccount() async {
@@ -96,6 +117,7 @@ class AuthService {
       ),
     );
     _token = null;
+    await _persist();
   }
 }
 

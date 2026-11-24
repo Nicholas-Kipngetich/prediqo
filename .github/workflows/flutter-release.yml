@@ -88,7 +88,7 @@ jobs:
           cp lib/lite/ads_lite.dart lib/core/ads.dart
           cp lib/lite/ad_banner_lite.dart lib/widgets/ad_banner.dart
           rm -f lib/core/firebase_options.dart
-          sed -i '/firebase_core:/d; /firebase_auth:/d; /google_sign_in:/d; /google_mobile_ads:/d; /shared_preferences:/d' pubspec.yaml
+          sed -i '/firebase_core:/d; /firebase_auth:/d; /google_sign_in:/d; /google_mobile_ads:/d' pubspec.yaml
 
       - name: Disable release lint task
         # AGP 8 lint crashes while analysing firebase_core sources on this runner.

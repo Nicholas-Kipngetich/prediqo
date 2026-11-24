@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../core/ads.dart';
+import '../core/auth_service.dart';
 import '../router/app_router.dart';
 import '../state/providers.dart';
 import '../theme/app_theme.dart';
@@ -10,7 +11,14 @@ import '../theme/app_theme.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await AdService.instance.initialize();
-  runApp(const ProviderScope(child: PrediqoApp()));
+  final auth = AuthService();
+  await auth.init();
+  runApp(
+    ProviderScope(
+      overrides: [authServiceProvider.overrideWithValue(auth)],
+      child: const PrediqoApp(),
+    ),
+  );
 }
 
 class PrediqoApp extends ConsumerWidget {
