@@ -180,8 +180,8 @@ class SettingsScreen extends ConsumerWidget {
               context,
               'Privacy',
               'Prediqo collects only the data needed to provide accounts, '
-              'predictions and notifications. See the published privacy policy '
-              'before release.',
+                  'predictions and notifications. See the published privacy policy '
+                  'before release.',
             ),
           ),
           ListTile(
@@ -191,7 +191,7 @@ class SettingsScreen extends ConsumerWidget {
               context,
               'Terms',
               'Prediqo is informational sports analytics, not betting. '
-              'Full terms must be published before release.',
+                  'Full terms must be published before release.',
             ),
           ),
           ListTile(
@@ -201,7 +201,7 @@ class SettingsScreen extends ConsumerWidget {
               context,
               'Support',
               'Contact support through the email address published on the '
-              'Prediqo website.',
+                  'Prediqo website.',
             ),
           ),
           ListTile(
@@ -314,9 +314,7 @@ class SettingsScreen extends ConsumerWidget {
         .map((item) => item.trim())
         .where((item) => item.isNotEmpty)
         .toList();
-    await ref
-        .read(fixturesRepositoryProvider)
-        .setFavorites(kind, ids);
+    await ref.read(fixturesRepositoryProvider).setFavorites(kind, ids);
     ref.invalidate(favoritesProvider);
   }
 

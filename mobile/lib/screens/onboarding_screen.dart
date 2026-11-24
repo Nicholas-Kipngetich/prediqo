@@ -98,9 +98,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                   height: 8,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: index == _page
-                        ? AppColors.primary
-                        : AppColors.divider,
+                    color:
+                        index == _page ? AppColors.primary : AppColors.divider,
                   ),
                 ),
               ),
