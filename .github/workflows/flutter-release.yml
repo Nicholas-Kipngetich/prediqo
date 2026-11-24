@@ -58,6 +58,17 @@ jobs:
         if: inputs.minimal_diagnostic != true
         run: cp firebase/google-services.example.json android/app/google-services.json
 
+      - name: Ensure INTERNET permission
+        run: |
+          python3 -c "
+          p = 'android/app/src/main/AndroidManifest.xml'
+          s = open(p).read()
+          perm = '<uses-permission android:name=\"android.permission.INTERNET\"/>'
+          if perm not in s:
+              s = s.replace('<application', perm + '\n    <application', 1)
+          open(p, 'w').write(s)
+          "
+
       - name: Use minimal diagnostic entry point
         if: inputs.minimal_diagnostic == true
         run: |
