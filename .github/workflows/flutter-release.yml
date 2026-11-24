@@ -24,6 +24,11 @@ on:
         type: boolean
         required: false
         default: false
+      minimal_diagnostic:
+        description: Build a diagnostic APK with no Firebase/AdMob plugins
+        type: boolean
+        required: false
+        default: false
 
 jobs:
   build-appbundle:
@@ -50,7 +55,14 @@ jobs:
         run: flutter create . --project-name prediqo --org com.prediqo --platforms android
 
       - name: Provide Firebase Android config
+        if: inputs.minimal_diagnostic != true
         run: cp firebase/google-services.example.json android/app/google-services.json
+
+      - name: Use minimal diagnostic entry point
+        if: inputs.minimal_diagnostic == true
+        run: |
+          cp lib/main_minimal.dart lib/main.dart
+          sed -i '/firebase_core:/d; /firebase_auth:/d; /google_sign_in:/d; /google_mobile_ads:/d' pubspec.yaml
 
       - name: Disable release lint task
         # AGP 8 lint crashes while analysing firebase_core sources on this runner.
@@ -68,6 +80,7 @@ jobs:
         run: flutter pub get
 
       - name: Analyze
+        if: inputs.minimal_diagnostic != true
         run: flutter analyze
 
       - name: Build release App Bundle
