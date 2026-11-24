@@ -31,6 +31,11 @@ final trendingProvider = FutureProvider<FixturePage>((ref) async {
   return ref.watch(fixturesRepositoryProvider).fetchTrending();
 });
 
+final analysisProvider =
+    FutureProvider.family<AnalysisModel, String>((ref, fixtureId) async {
+  return ref.watch(fixturesRepositoryProvider).fetchAnalysis(fixtureId);
+});
+
 final predictionsProvider =
     FutureProvider.family<List<PredictionModel>, String>((ref, market) async {
   return ref.watch(fixturesRepositoryProvider).fetchPredictions(market);

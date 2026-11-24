@@ -132,6 +132,69 @@ class FixturePage {
   }
 }
 
+class MarketAnalysisModel {
+  final String name;
+  final Map<String, int> probabilitiesBp;
+  final String selectedOutcome;
+
+  MarketAnalysisModel({
+    required this.name,
+    required this.probabilitiesBp,
+    required this.selectedOutcome,
+  });
+
+  factory MarketAnalysisModel.fromJson(Map<String, dynamic> json) {
+    final rawProbabilities = json['probabilities_bp'] as Map<String, dynamic>? ?? {};
+    return MarketAnalysisModel(
+      name: json['name'] as String? ?? '',
+      probabilitiesBp: rawProbabilities.map(
+        (key, value) => MapEntry(key, (value as num).toInt()),
+      ),
+      selectedOutcome: json['selected_outcome'] as String? ?? '',
+    );
+  }
+}
+
+class AnalysisModel {
+  final String entitlement;
+  final bool isSampleData;
+  final double? expectedHomeGoals;
+  final double? expectedAwayGoals;
+  final Map<String, MarketAnalysisModel> markets;
+  final List<String> facts;
+
+  AnalysisModel({
+    required this.entitlement,
+    required this.isSampleData,
+    required this.expectedHomeGoals,
+    required this.expectedAwayGoals,
+    required this.markets,
+    required this.facts,
+  });
+
+  factory AnalysisModel.fromJson(Map<String, dynamic> json) {
+    final rawMarkets = json['markets'] as Map<String, dynamic>? ?? {};
+    final rawExplanation = json['explanation'] as Map<String, dynamic>? ?? {};
+    final rawFacts = rawExplanation['facts'] as List<dynamic>? ?? [];
+    return AnalysisModel(
+      entitlement: json['entitlement'] as String? ?? 'free',
+      isSampleData: json['is_sample_data'] as bool? ?? false,
+      expectedHomeGoals: (json['expected_home_goals'] as num?)?.toDouble(),
+      expectedAwayGoals: (json['expected_away_goals'] as num?)?.toDouble(),
+      markets: rawMarkets.map(
+        (key, value) => MapEntry(
+          key,
+          MarketAnalysisModel.fromJson(value as Map<String, dynamic>),
+        ),
+      ),
+      facts: rawFacts.map((item) => item as String).toList(),
+    );
+  }
+
+  Map<String, int> get oneXTwo =>
+      markets['1X2']?.probabilitiesBp ?? <String, int>{};
+}
+
 class NotificationModel {
   final String id;
   final String type;

@@ -148,6 +148,13 @@ class FixturesRepository {
     await _dio.delete<void>('/api/v1/users/me');
   }
 
+  Future<AnalysisModel> fetchAnalysis(String fixtureId) async {
+    final response = await _dio.get<Map<String, dynamic>>(
+      '/api/v1/fixtures/$fixtureId/analysis',
+    );
+    return AnalysisModel.fromJson(response.data ?? {});
+  }
+
   Future<UserModel?> fetchCurrentUser() async {
     try {
       final response = await _dio.post<Map<String, dynamic>>(
