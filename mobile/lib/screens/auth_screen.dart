@@ -24,13 +24,10 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
   bool _register = false;
   bool _useEmail = true;
   bool _awaitingCode = false;
-  bool _resetting = false;
-  bool _resetCodeSent = false;
   bool _busy = false;
   String? _error;
   String? _verificationCode;
   String? _identifier;
-  String? _resetCode;
 
   @override
   void dispose() {
@@ -126,73 +123,6 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
       if (credential != null) {
         ref.invalidate(currentUserProvider);
         if (mounted) context.go('/home');
-      }
-    } catch (error) {
-      if (mounted) setState(() => _error = error.toString());
-    } finally {
-      if (mounted) setState(() => _busy = false);
-    }
-  }
-
-  Future<void> _requestReset() async {
-    final identifier = _identifierValue();
-    if (identifier == null) {
-      setState(() => _error = 'Enter your email or phone first.');
-      return;
-    }
-    setState(() {
-      _busy = true;
-      _error = null;
-    });
-    try {
-      final code = await ref.read(authServiceProvider).requestPasswordReset(
-            email: _useEmail ? identifier : null,
-            phone: _useEmail ? null : identifier,
-          );
-      if (mounted) {
-        setState(() {
-          _resetting = true;
-          _resetCodeSent = true;
-          _resetCode = code;
-        });
-      }
-    } catch (error) {
-      if (mounted) setState(() => _error = error.toString());
-    } finally {
-      if (mounted) setState(() => _busy = false);
-    }
-  }
-
-  Future<void> _confirmReset() async {
-    final identifier = _identifierValue();
-    if (identifier == null) return;
-    if (_codeController.text.trim().length < 4) {
-      setState(() => _error = 'Enter the reset code.');
-      return;
-    }
-    if (_passwordController.text.length < 6) {
-      setState(() => _error = 'Password must be at least 6 characters.');
-      return;
-    }
-    setState(() {
-      _busy = true;
-      _error = null;
-    });
-    try {
-      await ref.read(authServiceProvider).resetPassword(
-            email: _useEmail ? identifier : null,
-            phone: _useEmail ? null : identifier,
-            code: _codeController.text.trim(),
-            newPassword: _passwordController.text,
-          );
-      if (mounted) {
-        setState(() {
-          _resetting = false;
-          _resetCodeSent = false;
-          _resetCode = null;
-          _codeController.clear();
-          _error = 'Password updated. You can now sign in.';
-        });
       }
     } catch (error) {
       if (mounted) setState(() => _error = error.toString());

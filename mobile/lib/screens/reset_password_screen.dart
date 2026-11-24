@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../core/auth_service.dart';
-import '../state/providers.dart';
 import '../theme/app_theme.dart';
 
 class ResetPasswordScreen extends ConsumerStatefulWidget {
