@@ -79,6 +79,26 @@ class FixturesRepository {
     return FixtureModel.fromJson(response.data ?? {});
   }
 
+  Future<List<PredictionModel>> fetchPredictionHistory({
+    String? market,
+    String? status,
+    int limit = 50,
+  }) async {
+    final query = <String, dynamic>{
+      'limit': limit,
+      if (market != null) 'market': market,
+      if (status != null) 'status': status,
+    };
+    final response = await _dio.get<List<dynamic>>(
+      '/api/v1/predictions/history',
+      queryParameters: query,
+    );
+    final raw = response.data ?? [];
+    return raw
+        .map((item) => PredictionModel.fromJson(item as Map<String, dynamic>))
+        .toList();
+  }
+
   Future<List<PredictionModel>> fetchPredictions(String market) async {
     final response = await _dio.get<List<dynamic>>(
       '/api/v1/predictions',

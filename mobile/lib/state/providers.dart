@@ -42,6 +42,13 @@ final predictionsProvider =
   return ref.watch(fixturesRepositoryProvider).fetchPredictions(market);
 });
 
+final predictionHistoryProvider =
+    FutureProvider.family<List<PredictionModel>, String>((ref, status) async {
+  return ref.watch(fixturesRepositoryProvider).fetchPredictionHistory(
+        status: status == 'all' ? null : status,
+      );
+});
+
 final notificationsProvider =
     FutureProvider<List<NotificationModel>>((ref) async {
   return ref.watch(fixturesRepositoryProvider).fetchNotifications();

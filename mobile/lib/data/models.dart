@@ -375,29 +375,45 @@ class PerformanceOverview {
 class PredictionModel {
   final String id;
   final String fixtureId;
+  final String? fixtureLabel;
+  final String? competitionName;
+  final DateTime? kickoffUtc;
   final String market;
   final String modelVersion;
   final Map<String, int> probabilitiesBp;
   final String selectedOutcome;
   final String status;
+  final DateTime publishedAt;
+  final String? actualOutcome;
   final bool isSampleData;
 
   PredictionModel({
     required this.id,
     required this.fixtureId,
+    this.fixtureLabel,
+    this.competitionName,
+    this.kickoffUtc,
     required this.market,
     required this.modelVersion,
     required this.probabilitiesBp,
     required this.selectedOutcome,
     required this.status,
-    required this.isSampleData,
+    required this.publishedAt,
+    this.actualOutcome,
+    this.isSampleData = false,
   });
 
   factory PredictionModel.fromJson(Map<String, dynamic> json) {
     final raw = json['probabilities_bp'] as Map<String, dynamic>? ?? {};
+    final kickoff = json['kickoff_utc'];
+    final published = json['published_at'];
+    final settled = json['settled_at'];
     return PredictionModel(
       id: json['id'] as String,
       fixtureId: json['fixture_id'] as String,
+      fixtureLabel: json['fixture_label'] as String?,
+      competitionName: json['competition_name'] as String?,
+      kickoffUtc: kickoff == null ? null : DateTime.parse(kickoff as String),
       market: json['market'] as String,
       modelVersion: json['model_version'] as String,
       probabilitiesBp: raw.map(
@@ -405,6 +421,8 @@ class PredictionModel {
       ),
       selectedOutcome: json['selected_outcome'] as String,
       status: json['status'] as String,
+      publishedAt: DateTime.parse(published as String),
+      actualOutcome: json['actual_outcome'] as String?,
       isSampleData: json['is_sample_data'] as bool? ?? false,
     );
   }

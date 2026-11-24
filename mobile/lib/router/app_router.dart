@@ -6,6 +6,7 @@ import '../screens/home_screen.dart';
 import '../screens/match_detail_screen.dart';
 import '../screens/matches_screen.dart';
 import '../screens/other_screens.dart';
+import '../screens/prediction_history_screen.dart';
 import '../screens/onboarding_screen.dart';
 import '../screens/settings_screen.dart';
 import '../screens/splash_screen.dart';
@@ -44,6 +45,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/predictions',
         builder: (context, state) => const PredictionsScreen(),
+      ),
+      GoRoute(
+        path: '/predictions/history',
+        builder: (context, state) => const PredictionHistoryScreen(),
       ),
       GoRoute(
         path: '/performance',

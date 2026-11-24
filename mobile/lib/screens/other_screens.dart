@@ -19,43 +19,58 @@ class PredictionsScreen extends ConsumerWidget {
     return AppScaffold(
       title: 'Predictions',
       selectedIndex: 2,
-      body: predictions.when(
-        data: (items) {
-          if (items.isEmpty) {
-            return const EmptyState(
-              title: 'No predictions published yet',
-              message:
-                  'Run prediction generation from the admin API to publish '
-                  'the first validated predictions.',
-              icon: Icons.insights_outlined,
-            );
-          }
-          return ListView.builder(
-            itemCount: items.length,
-            itemBuilder: (context, index) {
-              final item = items[index];
-              final probs = item.probabilitiesBp;
-              final home = probs['home'] ?? 0;
-              final draw = probs['draw'] ?? 0;
-              final away = probs['away'] ?? 0;
-              return Card(
-                child: ListTile(
-                  title: Text('${item.market} · ${item.selectedOutcome}'),
-                  subtitle: Text('H $home%  D $draw%  A $away%'),
-                  trailing: Text(
-                    item.isSampleData ? 'DEMO' : item.status,
-                    style: const TextStyle(fontSize: 10),
-                  ),
-                ),
-              );
-            },
-          );
-        },
-        loading: () => const LoadingState(),
-        error: (error, _) => ErrorState(
-          error: error,
-          onRetry: () => ref.invalidate(predictionsProvider('1X2')),
-        ),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(12),
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: TextButton(
+                onPressed: () => context.go('/predictions/history'),
+                child: const Text('History'),
+              ),
+            ),
+          ),
+          Expanded(
+            child: predictions.when(
+              data: (items) {
+                if (items.isEmpty) {
+                  return const EmptyState(
+                    title: 'No predictions published yet',
+                    message: 'Run prediction generation from the admin API to '
+                        'publish the first validated predictions.',
+                    icon: Icons.insights_outlined,
+                  );
+                }
+                return ListView.builder(
+                  itemCount: items.length,
+                  itemBuilder: (context, index) {
+                    final item = items[index];
+                    final probs = item.probabilitiesBp;
+                    final home = probs['home'] ?? 0;
+                    final draw = probs['draw'] ?? 0;
+                    final away = probs['away'] ?? 0;
+                    return Card(
+                      child: ListTile(
+                        title: Text('${item.market} · ${item.selectedOutcome}'),
+                        subtitle: Text('H $home%  D $draw%  A $away%'),
+                        trailing: Text(
+                          item.isSampleData ? 'DEMO' : item.status,
+                          style: const TextStyle(fontSize: 10),
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
+              loading: () => const LoadingState(),
+              error: (error, _) => ErrorState(
+                error: error,
+                onRetry: () => ref.invalidate(predictionsProvider('1X2')),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
