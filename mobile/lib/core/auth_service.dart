@@ -11,6 +11,33 @@ class AuthService {
 
   bool get isSignedIn => currentUser != null;
 
+  Future<String> register({
+    String? email,
+    String? phone,
+    required String password,
+    String? displayName,
+  }) async {
+    // Full Firebase registration is completed in a later pass. The development
+    // build uses the backend dev-auth endpoints instead of Firebase.
+    throw UnimplementedError('Firebase registration is not wired in this build.');
+  }
+
+  Future<String> login({
+    String? email,
+    String? phone,
+    required String password,
+  }) async {
+    throw UnimplementedError('Firebase login is not wired in this build.');
+  }
+
+  Future<String> verifyCode({
+    String? email,
+    String? phone,
+    required String code,
+  }) async {
+    throw UnimplementedError('Firebase verification is not wired in this build.');
+  }
+
   Future<UserCredential> registerWithEmail(String email, String password) {
     return _auth.createUserWithEmailAndPassword(
       email: email.trim(),

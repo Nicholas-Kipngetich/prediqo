@@ -524,6 +524,7 @@ class SearchResultModel {
 class UserModel {
   final String id;
   final String? email;
+  final String? phone;
   final String? displayName;
   final List<String> roles;
   final bool isVip;
@@ -535,6 +536,7 @@ class UserModel {
   UserModel({
     required this.id,
     this.email,
+    this.phone,
     this.displayName,
     required this.roles,
     required this.isVip,
@@ -550,6 +552,7 @@ class UserModel {
     return UserModel(
       id: json['id'] as String,
       email: json['email'] as String?,
+      phone: json['phone'] as String?,
       displayName: json['display_name'] as String?,
       roles: rawRoles.map((role) => role as String).toList(),
       isVip: json['is_vip'] as bool? ?? false,

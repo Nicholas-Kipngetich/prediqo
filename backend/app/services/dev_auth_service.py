@@ -1,7 +1,6 @@
-"""Development-only email/password authentication helpers.
+"""Development-only email or phone authentication with verification codes.
 
-Passwords are hashed with PBKDF2. Tokens are HMAC-signed and contain only the
-firebase_uid used to look up the user. This mode is disabled outside development.
+This mode is disabled outside development. Production uses Firebase.
 """
 
 import base64
@@ -27,6 +26,23 @@ TOKEN_TTL_HOURS = 24 * 7
 
 def _dev_mode() -> bool:
     return settings.environment == "development" and settings.auth_mode == "dev"
+
+
+def _normalise_identifier(email: str | None, phone: str | None) -> str:
+    if bool(email) == bool(phone):
+        raise ConflictError("Provide exactly one of email or phone.")
+    if email:
+        return email.strip().lower()
+    if phone is None:
+        raise ConflictError("A valid phone number is required.")
+    digits = "".join(character for character in phone if character.isdigit())
+    if len(digits) < 7:
+        raise ConflictError("A valid phone number is required.")
+    return digits
+
+
+def _firebase_uid(identifier: str) -> str:
+    return f"dev:{identifier}"
 
 
 def _hash_password(password: str, salt: str) -> str:
@@ -70,59 +86,128 @@ def parse_token(token: str) -> str:
 
 
 async def register(
-    session: AsyncSession, email: str, password: str, display_name: str | None
+    session: AsyncSession,
+    email: str | None,
+    phone: str | None,
+    password: str,
+    display_name: str | None,
 ) -> tuple[User, str]:
     if not _dev_mode():
         raise ConflictError("Development authentication is disabled.")
     if len(password) < 6:
         raise ConflictError("Password must be at least 6 characters.")
-    email = email.strip().lower()
-    firebase_uid = f"dev:{email}"
+    identifier = _normalise_identifier(email, phone)
+    firebase_uid = _firebase_uid(identifier)
 
     existing = (
         await session.execute(select(User).where(User.firebase_uid == firebase_uid))
     ).scalar_one_or_none()
     if existing is not None:
-        raise ConflictError("An account with this email already exists.")
+        raise ConflictError("An account with this identifier already exists.")
 
     await ensure_seed_roles(session)
     role = (await session.execute(select(Role).where(Role.code == RoleCode.USER))).scalar_one()
     user = User(
         id=uuid.uuid4(),
         firebase_uid=firebase_uid,
-        email=email,
-        display_name=display_name or email.split("@")[0],
-        status=UserStatus.ACTIVE,
+        email=email.strip().lower() if email else None,
+        phone=_normalise_identifier(None, phone) if phone else None,
+        display_name=display_name or (email.split("@")[0] if email else identifier),
+        status=UserStatus.PENDING,
     )
     user.roles.append(role)
     session.add(user)
     await session.flush()
 
     salt = secrets.token_hex(16)
+    code = f"{secrets.randbelow(900000) + 100000:06d}"
     session.add(
         DevCredential(
             user_id=user.id,
             salt=salt,
             password_hash=_hash_password(password, salt),
+            verification_code_hash=_hash_password(code, salt),
+            verification_expires_at=datetime.now(UTC)
+            + timedelta(minutes=settings.dev_verification_code_ttl_minutes),
         )
     )
     await session.commit()
-    return user, create_token(firebase_uid)
+    return user, code
 
 
-async def login(session: AsyncSession, email: str, password: str) -> tuple[User, str]:
+async def verify_code(
+    session: AsyncSession, email: str | None, phone: str | None, code: str
+) -> tuple[User, str]:
     if not _dev_mode():
         raise ConflictError("Development authentication is disabled.")
-    email = email.strip().lower()
-    firebase_uid = f"dev:{email}"
+    identifier = _normalise_identifier(email, phone)
+    firebase_uid = _firebase_uid(identifier)
     user = (
         await session.execute(select(User).where(User.firebase_uid == firebase_uid))
     ).scalar_one_or_none()
     if user is None:
-        raise UnauthorizedError("Invalid email or password.")
+        raise UnauthorizedError("Invalid verification code.")
+    credential = await session.get(DevCredential, user.id)
+    if credential is None or credential.verification_code_hash is None:
+        raise UnauthorizedError("Invalid verification code.")
+    if credential.verified_at is not None:
+        return user, create_token(firebase_uid)
+    if credential.verification_expires_at is not None:
+        expires_at = credential.verification_expires_at
+        if expires_at.tzinfo is None:
+            expires_at = expires_at.replace(tzinfo=UTC)
+        if expires_at < datetime.now(UTC):
+            raise UnauthorizedError("Verification code has expired.")
+    if not hmac.compare_digest(
+        credential.verification_code_hash, _hash_password(code, credential.salt)
+    ):
+        raise UnauthorizedError("Invalid verification code.")
+    credential.verified_at = datetime.now(UTC)
+    user.status = UserStatus.ACTIVE
+    await session.commit()
+    return user, create_token(firebase_uid)
+
+
+async def resend_code(session: AsyncSession, email: str | None, phone: str | None) -> str:
+    if not _dev_mode():
+        raise ConflictError("Development authentication is disabled.")
+    identifier = _normalise_identifier(email, phone)
+    firebase_uid = _firebase_uid(identifier)
+    user = (
+        await session.execute(select(User).where(User.firebase_uid == firebase_uid))
+    ).scalar_one_or_none()
+    if user is None:
+        raise UnauthorizedError("Account not found.")
     credential = await session.get(DevCredential, user.id)
     if credential is None:
+        raise UnauthorizedError("Account not found.")
+    if credential.verified_at is not None:
+        raise ConflictError("Account is already verified.")
+    code = f"{secrets.randbelow(900000) + 100000:06d}"
+    salt = credential.salt
+    credential.verification_code_hash = _hash_password(code, salt)
+    credential.verification_expires_at = datetime.now(UTC) + timedelta(
+        minutes=settings.dev_verification_code_ttl_minutes
+    )
+    await session.commit()
+    return code
+
+
+async def login(
+    session: AsyncSession, email: str | None, phone: str | None, password: str
+) -> tuple[User, str]:
+    if not _dev_mode():
+        raise ConflictError("Development authentication is disabled.")
+    identifier = _normalise_identifier(email, phone)
+    firebase_uid = _firebase_uid(identifier)
+    user = (
+        await session.execute(select(User).where(User.firebase_uid == firebase_uid))
+    ).scalar_one_or_none()
+    if user is None or user.status != UserStatus.ACTIVE:
         raise UnauthorizedError("Invalid email or password.")
+    credential = await session.get(DevCredential, user.id)
+    if credential is None or credential.verified_at is None:
+        raise UnauthorizedError("Account is not verified.")
     if not hmac.compare_digest(credential.password_hash, _hash_password(password, credential.salt)):
         raise UnauthorizedError("Invalid email or password.")
     return user, create_token(firebase_uid)

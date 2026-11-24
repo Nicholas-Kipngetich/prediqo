@@ -13,10 +13,23 @@ from app.services import dev_auth_service
 router = APIRouter(prefix="/auth", tags=["auth"])
 
 
-class DevAuthIn(BaseModel):
-    email: str = Field(min_length=3, max_length=320)
+class IdentifierIn(BaseModel):
+    email: str | None = Field(default=None, max_length=320)
+    phone: str | None = Field(default=None, max_length=32)
     password: str = Field(min_length=6, max_length=128)
+    confirm_password: str | None = Field(default=None, max_length=128)
     display_name: str | None = Field(default=None, max_length=120)
+
+
+class VerifyCodeIn(BaseModel):
+    email: str | None = Field(default=None, max_length=320)
+    phone: str | None = Field(default=None, max_length=32)
+    code: str = Field(min_length=4, max_length=12)
+
+
+class ResendCodeIn(BaseModel):
+    email: str | None = Field(default=None, max_length=320)
+    phone: str | None = Field(default=None, max_length=32)
 
 
 class DevTokenOut(BaseModel):
@@ -25,40 +38,77 @@ class DevTokenOut(BaseModel):
     user: UserOut
 
 
-@router.post("/register", response_model=DevTokenOut)
+class RegistrationOut(BaseModel):
+    user: UserOut
+    verification_required: bool = True
+    verification_code: str | None = None
+    message: str
+
+
+@router.post("/register", response_model=RegistrationOut)
 async def dev_register(
-    payload: DevAuthIn,
+    payload: IdentifierIn,
     session: AsyncSession = Depends(get_session),
-) -> DevTokenOut:
-    if "@" not in payload.email:
+) -> RegistrationOut:
+    if payload.confirm_password is not None and payload.password != payload.confirm_password:
         from app.core.errors import ConflictError
 
-        raise ConflictError("A valid email address is required.")
-    user, token = await dev_auth_service.register(
-        session, payload.email, payload.password, payload.display_name
+        raise ConflictError("Passwords do not match.")
+    user, code = await dev_auth_service.register(
+        session,
+        payload.email,
+        payload.phone,
+        payload.password,
+        payload.display_name,
     )
     await session.refresh(user, attribute_names=["profile", "roles"])
     for role in user.roles:
         await session.refresh(role, attribute_names=["permissions"])
-    return DevTokenOut(
-        access_token=token,
+    return RegistrationOut(
         user=user_to_out(user),
+        verification_code=code if dev_auth_service._dev_mode() else None,
+        message="Account created. Enter the verification code to continue.",
     )
+
+
+@router.post("/verify-code", response_model=DevTokenOut)
+async def dev_verify_code(
+    payload: VerifyCodeIn,
+    session: AsyncSession = Depends(get_session),
+) -> DevTokenOut:
+    user, token = await dev_auth_service.verify_code(
+        session, payload.email, payload.phone, payload.code
+    )
+    await session.refresh(user, attribute_names=["profile", "roles"])
+    for role in user.roles:
+        await session.refresh(role, attribute_names=["permissions"])
+    return DevTokenOut(access_token=token, user=user_to_out(user))
+
+
+@router.post("/resend-code")
+async def dev_resend_code(
+    payload: ResendCodeIn,
+    session: AsyncSession = Depends(get_session),
+) -> dict:
+    code = await dev_auth_service.resend_code(session, payload.email, payload.phone)
+    return {
+        "message": "Verification code sent.",
+        "verification_code": code if dev_auth_service._dev_mode() else None,
+    }
 
 
 @router.post("/login", response_model=DevTokenOut)
 async def dev_login(
-    payload: DevAuthIn,
+    payload: IdentifierIn,
     session: AsyncSession = Depends(get_session),
 ) -> DevTokenOut:
-    user, token = await dev_auth_service.login(session, payload.email, payload.password)
+    user, token = await dev_auth_service.login(
+        session, payload.email, payload.phone, payload.password
+    )
     await session.refresh(user, attribute_names=["profile", "roles"])
     for role in user.roles:
         await session.refresh(role, attribute_names=["permissions"])
-    return DevTokenOut(
-        access_token=token,
-        user=user_to_out(user),
-    )
+    return DevTokenOut(access_token=token, user=user_to_out(user))
 
 
 @router.post("/verify", response_model=UserOut)
@@ -66,7 +116,7 @@ async def verify_token(
     user: User = Depends(get_current_user),
     session: AsyncSession = Depends(get_session),
 ) -> UserOut:
-    """Verify a Firebase ID token and return the provisioned user profile."""
+    """Verify a Firebase or development token and return the profile."""
     await session.refresh(user, attribute_names=["profile", "roles"])
     for role in user.roles:
         await session.refresh(role, attribute_names=["permissions"])

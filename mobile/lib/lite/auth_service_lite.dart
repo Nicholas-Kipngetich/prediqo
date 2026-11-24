@@ -2,12 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../core/app_config.dart';
-import '../data/models.dart';
 
-/// Lite auth shim for local testing.
-///
-/// Uses the backend's development email/password endpoints instead of Firebase
-/// native plugins. Tokens are signed by the backend and attached to API calls.
 class AuthService {
   AuthService();
 
@@ -29,27 +24,62 @@ class AuthService {
 
   Future<String?> idToken() async => _token;
 
-  Future<void> registerWithEmail(String email, String password) async {
+  Future<String> register({
+    String? email,
+    String? phone,
+    required String password,
+    String? displayName,
+  }) async {
     final response = await _dio.post<Map<String, dynamic>>(
       '/api/v1/auth/register',
-      data: {'email': email.trim(), 'password': password},
+      data: {
+        if (email != null) 'email': email.trim(),
+        if (phone != null) 'phone': phone.trim(),
+        'password': password,
+        'confirm_password': password,
+        if (displayName != null) 'display_name': displayName,
+      },
     );
-    final result = AuthResultModel.fromJson(response.data ?? {});
-    _token = result.accessToken;
+    _token = response.data?['access_token'] as String?;
+    final code = response.data?['verification_code'] as String?;
+    return code ?? '';
   }
 
-  Future<void> signInWithEmail(String email, String password) async {
+  Future<String> verifyCode({
+    String? email,
+    String? phone,
+    required String code,
+  }) async {
+    final response = await _dio.post<Map<String, dynamic>>(
+      '/api/v1/auth/verify-code',
+      data: {
+        if (email != null) 'email': email.trim(),
+        if (phone != null) 'phone': phone.trim(),
+        'code': code.trim(),
+      },
+    );
+    _token = response.data?['access_token'] as String?;
+    return _token ?? '';
+  }
+
+  Future<String> login({
+    String? email,
+    String? phone,
+    required String password,
+  }) async {
     final response = await _dio.post<Map<String, dynamic>>(
       '/api/v1/auth/login',
-      data: {'email': email.trim(), 'password': password},
+      data: {
+        if (email != null) 'email': email.trim(),
+        if (phone != null) 'phone': phone.trim(),
+        'password': password,
+      },
     );
-    final result = AuthResultModel.fromJson(response.data ?? {});
-    _token = result.accessToken;
+    _token = response.data?['access_token'] as String?;
+    return _token ?? '';
   }
 
-  Future<void> sendPasswordReset(String email) async {
-    // Not available in dev auth mode.
-  }
+  Future<void> sendPasswordReset(String email) async {}
 
   Future<Object?> signInWithGoogle() async => null;
 
