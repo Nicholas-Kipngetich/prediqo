@@ -44,8 +44,11 @@ Requirements:
 ### What to test in the app
 1. Splash → Home (dev bypass)
 2. Home: fixtures, trending, token balance, demo banner ad
-3. Matches: filter chips (Upcoming / Results / Trending)
+2. Search: tap the search icon on Home, try "Sample"
+3. Matches: filter chips (Upcoming / Results / Trending) and expandable competition sections
 4. Match detail → analysis: first fixture opens, second is blocked by the daily quota
+5. Predictions: History button shows settled predictions with outcomes
+6. Profile → Settings: theme, notifications, favourites
 5. Predictions feed with probability bars
 6. Performance centre with accuracy and sample size
 7. Profile → Token Store / VIP / Notifications
