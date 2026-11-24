@@ -26,6 +26,10 @@ class HomeScreen extends ConsumerWidget {
       selectedIndex: 0,
       actions: [
         IconButton(
+          icon: const Icon(Icons.search),
+          onPressed: () => context.go('/search'),
+        ),
+        IconButton(
           icon: const Icon(Icons.notifications_none),
           onPressed: () => context.go('/notifications'),
         ),

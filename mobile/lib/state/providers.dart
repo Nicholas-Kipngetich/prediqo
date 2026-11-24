@@ -76,6 +76,15 @@ final performanceProvider = FutureProvider<PerformanceOverview>((ref) async {
   return ref.watch(fixturesRepositoryProvider).fetchPerformanceOverview();
 });
 
+final competitionsProvider = FutureProvider<List<CompetitionModel>>((ref) async {
+  return ref.watch(fixturesRepositoryProvider).fetchCompetitions();
+});
+
+final searchProvider =
+    FutureProvider.family<SearchResultModel, String>((ref, query) async {
+  return ref.watch(fixturesRepositoryProvider).search(query);
+});
+
 final currentUserProvider = FutureProvider<UserModel?>((ref) async {
   return ref.watch(fixturesRepositoryProvider).fetchCurrentUser();
 });

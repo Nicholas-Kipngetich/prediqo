@@ -492,6 +492,35 @@ class FavoritesModel {
   }
 }
 
+class SearchResultModel {
+  final List<CompetitionModel> competitions;
+  final List<TeamModel> teams;
+  final List<FixtureModel> fixtures;
+
+  SearchResultModel({
+    required this.competitions,
+    required this.teams,
+    required this.fixtures,
+  });
+
+  factory SearchResultModel.fromJson(Map<String, dynamic> json) {
+    final competitions = json['competitions'] as List<dynamic>? ?? [];
+    final teams = json['teams'] as List<dynamic>? ?? [];
+    final fixtures = json['fixtures'] as List<dynamic>? ?? [];
+    return SearchResultModel(
+      competitions: competitions
+          .map((item) => CompetitionModel.fromJson(item as Map<String, dynamic>))
+          .toList(),
+      teams: teams
+          .map((item) => TeamModel.fromJson(item as Map<String, dynamic>))
+          .toList(),
+      fixtures: fixtures
+          .map((item) => FixtureModel.fromJson(item as Map<String, dynamic>))
+          .toList(),
+    );
+  }
+}
+
 class UserModel {
   final String id;
   final String? email;

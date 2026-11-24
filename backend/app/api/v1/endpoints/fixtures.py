@@ -5,8 +5,9 @@ from datetime import UTC, datetime
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, Query
-from sqlalchemy import func, select
+from sqlalchemy import func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import aliased
 
 from app.api.deps import get_current_user
 from app.core.database import get_session
@@ -14,7 +15,14 @@ from app.core.errors import NotFoundError
 from app.models.identity import User
 from app.models.predictions import Prediction, PredictionMarket
 from app.models.sports import Competition, Fixture, Team
-from app.schemas.sports import AnalysisOut, CompetitionOut, FixtureOut, Page, TeamOut
+from app.schemas.sports import (
+    AnalysisOut,
+    CompetitionOut,
+    FixtureOut,
+    Page,
+    SearchOut,
+    TeamOut,
+)
 from app.services.analysis_service import check_analysis_access
 
 router = APIRouter(tags=["fixtures"])
@@ -194,6 +202,63 @@ async def get_fixture_analysis(
         expected_away_goals=snapshot.get("expected_away_goals"),
         markets=markets,
         explanation=explanation,
+    )
+
+
+@router.get("/search", response_model=SearchOut)
+async def search(
+    q: str = Query(..., min_length=2, max_length=80),
+    limit: int = Query(default=10, ge=1, le=50),
+    session: AsyncSession = Depends(get_session),
+) -> SearchOut:
+    pattern = f"%{q}%"
+    competitions = (
+        (
+            await session.execute(
+                select(Competition).where(Competition.name.ilike(pattern)).limit(limit)
+            )
+        )
+        .scalars()
+        .all()
+    )
+    teams = (
+        (
+            await session.execute(
+                select(Team)
+                .where(Team.name.ilike(pattern) | Team.short_name.ilike(pattern))
+                .limit(limit)
+            )
+        )
+        .scalars()
+        .all()
+    )
+    home_team = aliased(Team)
+    away_team = aliased(Team)
+    fixture_rows = (
+        await session.execute(
+            select(Fixture, Competition, home_team, away_team)
+            .join(Competition, Competition.id == Fixture.competition_id)
+            .join(home_team, home_team.id == Fixture.home_team_id)
+            .join(away_team, away_team.id == Fixture.away_team_id)
+            .where(
+                or_(
+                    Competition.name.ilike(pattern),
+                    home_team.name.ilike(pattern),
+                    away_team.name.ilike(pattern),
+                )
+            )
+            .order_by(Fixture.kickoff_utc)
+            .limit(limit)
+        )
+    ).all()
+    fixtures = []
+    for fixture, competition, home, away in fixture_rows:
+        fixtures.append(_fixture_to_out(fixture, competition, home, away))
+
+    return SearchOut(
+        competitions=[CompetitionOut.model_validate(row) for row in competitions],
+        teams=[TeamOut.model_validate(row) for row in teams],
+        fixtures=fixtures,
     )
 
 

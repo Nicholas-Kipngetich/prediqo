@@ -78,6 +78,18 @@ async def test_competitions_and_teams(synced_client):
 
 
 @pytest.mark.asyncio
+async def test_search_returns_matching_fixtures(synced_client):
+    client, auth_headers, _ = synced_client
+    response = await client.get("/api/v1/search?q=Sample&limit=50")
+
+    assert response.status_code == 200
+    data = response.json()
+    assert len(data["competitions"]) == 3
+    assert len(data["teams"]) == 8
+    assert len(data["fixtures"]) == 28
+
+
+@pytest.mark.asyncio
 async def test_sync_jobs_are_recorded(synced_client):
     client, auth_headers, _ = synced_client
     jobs = await client.get("/api/v1/admin/sync/jobs", headers=auth_headers)

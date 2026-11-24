@@ -66,6 +66,12 @@ class AnalysisOut(BaseModel):
     explanation: dict[str, object] = Field(default_factory=dict)
 
 
+class SearchOut(BaseModel):
+    competitions: list[CompetitionOut] = Field(default_factory=list)
+    teams: list[TeamOut] = Field(default_factory=list)
+    fixtures: list[FixtureOut] = Field(default_factory=list)
+
+
 class SyncResultOut(BaseModel):
     competitions: int
     teams: int

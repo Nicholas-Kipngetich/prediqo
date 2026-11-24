@@ -190,6 +190,22 @@ class FixturesRepository {
     return AnalysisModel.fromJson(response.data ?? {});
   }
 
+  Future<List<CompetitionModel>> fetchCompetitions() async {
+    final response = await _dio.get<List<dynamic>>('/api/v1/competitions');
+    final raw = response.data ?? [];
+    return raw
+        .map((item) => CompetitionModel.fromJson(item as Map<String, dynamic>))
+        .toList();
+  }
+
+  Future<SearchResultModel> search(String query) async {
+    final response = await _dio.get<Map<String, dynamic>>(
+      '/api/v1/search',
+      queryParameters: {'q': query, 'limit': 10},
+    );
+    return SearchResultModel.fromJson(response.data ?? {});
+  }
+
   Future<UserModel?> fetchCurrentUser() async {
     try {
       final response = await _dio.post<Map<String, dynamic>>(

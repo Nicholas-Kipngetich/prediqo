@@ -6,6 +6,7 @@ import '../screens/home_screen.dart';
 import '../screens/match_detail_screen.dart';
 import '../screens/matches_screen.dart';
 import '../screens/other_screens.dart';
+import '../screens/search_screen.dart';
 import '../screens/prediction_history_screen.dart';
 import '../screens/onboarding_screen.dart';
 import '../screens/settings_screen.dart';
@@ -30,6 +31,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/home',
         builder: (context, state) => const HomeScreen(),
+      ),
+      GoRoute(
+        path: '/search',
+        builder: (context, state) => const SearchScreen(),
       ),
       GoRoute(
         path: '/matches',

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../data/models.dart';
 import '../state/providers.dart';
 import '../widgets/app_scaffold.dart';
 import '../widgets/design_system.dart';
@@ -40,16 +41,49 @@ class MatchesScreen extends ConsumerWidget {
                     message: 'No fixtures match this filter.',
                   );
                 }
+                final competitions =
+                    ref.watch(competitionsProvider).valueOrNull ?? [];
+                if (competitions.isEmpty) {
+                  return ListView(
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    children: page.items
+                        .map(
+                          (fixture) => MatchCard(
+                            fixture: fixture,
+                            onTap: () => context.go('/matches/${fixture.id}'),
+                          ),
+                        )
+                        .toList(),
+                  );
+                }
+                final grouped = <String, List<FixtureModel>>{};
+                for (final fixture in page.items) {
+                  grouped
+                      .putIfAbsent(fixture.competition.id, () => [])
+                      .add(fixture);
+                }
                 return ListView(
                   padding: const EdgeInsets.symmetric(horizontal: 12),
-                  children: page.items
-                      .map(
-                        (fixture) => MatchCard(
-                          fixture: fixture,
-                          onTap: () => context.go('/matches/${fixture.id}'),
-                        ),
-                      )
-                      .toList(),
+                  children: grouped.entries.map((entry) {
+                    CompetitionModel? competition;
+                    for (final item in competitions) {
+                      if (item.id == entry.key) competition = item;
+                    }
+                    return Card(
+                      child: ExpansionTile(
+                        title: Text(competition?.name ?? 'Competition'),
+                        subtitle: Text('${entry.value.length} fixtures'),
+                        children: entry.value
+                            .map(
+                              (fixture) => MatchCard(
+                                fixture: fixture,
+                                onTap: () => context.go('/matches/${fixture.id}'),
+                              ),
+                            )
+                            .toList(),
+                      ),
+                    );
+                  }).toList(),
                 );
               },
               loading: () => const LoadingState(),
