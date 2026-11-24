@@ -132,6 +132,20 @@ class FixturePage {
   }
 }
 
+class AuthResultModel {
+  final String accessToken;
+  final UserModel user;
+
+  AuthResultModel({required this.accessToken, required this.user});
+
+  factory AuthResultModel.fromJson(Map<String, dynamic> json) {
+    return AuthResultModel(
+      accessToken: json['access_token'] as String,
+      user: UserModel.fromJson(json['user'] as Map<String, dynamic>),
+    );
+  }
+}
+
 class MarketAnalysisModel {
   final String name;
   final Map<String, int> probabilitiesBp;

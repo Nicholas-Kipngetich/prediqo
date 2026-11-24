@@ -31,13 +31,17 @@ class DevTokenVerifier(TokenVerifier):
         self._token = token
 
     async def verify(self, token: str) -> AuthContext:
-        if token != self._token:
-            raise UnauthorizedError("Invalid development token.")
-        return AuthContext(
-            firebase_uid="dev-firebase-uid",
-            email="dev@prediqo.local",
-            display_name="Prediqo Developer",
-        )
+        if token == self._token:
+            return AuthContext(
+                firebase_uid="dev-firebase-uid",
+                email="dev@prediqo.local",
+                display_name="Prediqo Developer",
+            )
+        from app.services.dev_auth_service import parse_token
+
+        uid = parse_token(token)
+        email = uid[4:] if uid.startswith("dev:") else None
+        return AuthContext(firebase_uid=uid, email=email)
 
 
 class FirebaseTokenVerifier(TokenVerifier):

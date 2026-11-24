@@ -3,6 +3,7 @@
 from app.models import access as _access  # noqa: F401
 from app.models import ads as _ads  # noqa: F401
 from app.models import communications as _communications  # noqa: F401
+from app.models import dev_credentials as _dev_credentials  # noqa: F401
 from app.models import monetization as _monetization  # noqa: F401
 from app.models import predictions as _predictions  # noqa: F401
 from app.models import sports as _sports  # noqa: F401

@@ -2,17 +2,8 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../data/models.dart';
+import 'app_config.dart';
 import 'auth_service.dart';
-
-const apiBaseUrl = String.fromEnvironment(
-  'API_BASE_URL',
-  defaultValue: 'http://10.0.2.2:8000',
-);
-
-const devAuthToken = String.fromEnvironment(
-  'DEV_AUTH_TOKEN',
-  defaultValue: 'prediqo-dev-token',
-);
 
 final dioProvider = Provider<Dio>((ref) {
   final dio = Dio(
@@ -146,6 +137,30 @@ class FixturesRepository {
 
   Future<void> deleteAccount() async {
     await _dio.delete<void>('/api/v1/users/me');
+  }
+
+  Future<AuthResultModel> register(
+    String email,
+    String password,
+    String? displayName,
+  ) async {
+    final response = await _dio.post<Map<String, dynamic>>(
+      '/api/v1/auth/register',
+      data: {
+        'email': email,
+        'password': password,
+        if (displayName != null) 'display_name': displayName,
+      },
+    );
+    return AuthResultModel.fromJson(response.data ?? {});
+  }
+
+  Future<AuthResultModel> login(String email, String password) async {
+    final response = await _dio.post<Map<String, dynamic>>(
+      '/api/v1/auth/login',
+      data: {'email': email, 'password': password},
+    );
+    return AuthResultModel.fromJson(response.data ?? {});
   }
 
   Future<AnalysisModel> fetchAnalysis(String fixtureId) async {

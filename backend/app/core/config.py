@@ -32,6 +32,7 @@ class Settings(BaseSettings):
     # "firebase" verifies real Firebase ID tokens. "dev" accepts a single
     # static token and is only honoured when environment == "development".
     auth_mode: str = "firebase"
+    secret_key: str = "dev-secret-change-me"
     firebase_project_id: str = ""
     dev_auth_token: str = "prediqo-dev-token"
     database_url: str | None = None  # override for tests (e.g. in-memory SQLite)
