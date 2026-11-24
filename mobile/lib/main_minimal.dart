@@ -55,12 +55,10 @@ class _MinimalHomeState extends State<MinimalHome> {
       } else {
         final decoded = jsonDecode(body) as Map<String, dynamic>;
         final items = decoded['items'] as List<dynamic>? ?? [];
-        _fixtures = items
-            .map((item) {
-              final map = item as Map<String, dynamic>;
-              return '${map['home_team']['name']} vs ${map['away_team']['name']}';
-            })
-            .toList();
+        _fixtures = items.map((item) {
+          final map = item as Map<String, dynamic>;
+          return '${map['home_team']['name']} vs ${map['away_team']['name']}';
+        }).toList();
         _status = 'OK — ${decoded['total']} fixtures';
       }
       client.close();

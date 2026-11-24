@@ -144,7 +144,8 @@ class MarketAnalysisModel {
   });
 
   factory MarketAnalysisModel.fromJson(Map<String, dynamic> json) {
-    final rawProbabilities = json['probabilities_bp'] as Map<String, dynamic>? ?? {};
+    final rawProbabilities =
+        json['probabilities_bp'] as Map<String, dynamic>? ?? {};
     return MarketAnalysisModel(
       name: json['name'] as String? ?? '',
       probabilitiesBp: rawProbabilities.map(

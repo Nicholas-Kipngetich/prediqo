@@ -158,8 +158,7 @@ class MatchDetailScreen extends ConsumerWidget {
                 padding: EdgeInsets.all(16),
                 child: Center(child: CircularProgressIndicator()),
               ),
-              error: (error, _) =>
-                  _analysisError(error, ref, fixtureId),
+              error: (error, _) => _analysisError(error, ref, fixtureId),
             ),
           ],
         ),
