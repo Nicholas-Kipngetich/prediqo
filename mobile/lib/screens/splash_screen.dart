@@ -40,10 +40,12 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
     if (!mounted) return;
     bool signedIn = false;
     bool isVip = false;
+    bool onboardingComplete = true;
     try {
       signedIn = ref.read(authServiceProvider).isSignedIn;
       final user = await ref.read(currentUserProvider.future);
       isVip = user?.isVip ?? false;
+      onboardingComplete = user?.onboardingCompleted ?? true;
     } catch (_) {
       // Firebase or API unavailable in local tests.
     }
@@ -60,6 +62,10 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
       }
     }
     if (!mounted) return;
+    if (signedIn && !onboardingComplete) {
+      context.go('/onboarding');
+      return;
+    }
     context.go(devBypassAuth || signedIn ? '/home' : '/auth');
   }
 

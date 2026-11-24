@@ -410,12 +410,81 @@ class PredictionModel {
   }
 }
 
+class PreferencesModel {
+  final bool dailyInsight;
+  final bool upcomingFixture;
+  final bool matchResult;
+  final bool favoriteTeam;
+  final bool vipContent;
+  final bool subscription;
+  final int? quietHoursStart;
+  final int? quietHoursEnd;
+
+  PreferencesModel({
+    required this.dailyInsight,
+    required this.upcomingFixture,
+    required this.matchResult,
+    required this.favoriteTeam,
+    required this.vipContent,
+    required this.subscription,
+    this.quietHoursStart,
+    this.quietHoursEnd,
+  });
+
+  factory PreferencesModel.fromJson(Map<String, dynamic> json) {
+    return PreferencesModel(
+      dailyInsight: json['daily_insight'] as bool? ?? true,
+      upcomingFixture: json['upcoming_fixture'] as bool? ?? true,
+      matchResult: json['match_result'] as bool? ?? true,
+      favoriteTeam: json['favorite_team'] as bool? ?? true,
+      vipContent: json['vip_content'] as bool? ?? true,
+      subscription: json['subscription'] as bool? ?? true,
+      quietHoursStart: json['quiet_hours_start'] as int?,
+      quietHoursEnd: json['quiet_hours_end'] as int?,
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        'daily_insight': dailyInsight,
+        'upcoming_fixture': upcomingFixture,
+        'match_result': matchResult,
+        'favorite_team': favoriteTeam,
+        'vip_content': vipContent,
+        'subscription': subscription,
+        'quiet_hours_start': quietHoursStart,
+        'quiet_hours_end': quietHoursEnd,
+      };
+}
+
+class FavoritesModel {
+  final List<String> teamIds;
+  final List<String> competitionIds;
+
+  FavoritesModel({
+    required this.teamIds,
+    required this.competitionIds,
+  });
+
+  factory FavoritesModel.fromJson(Map<String, dynamic> json) {
+    final teams = json['team_ids'] as List<dynamic>? ?? [];
+    final competitions = json['competition_ids'] as List<dynamic>? ?? [];
+    return FavoritesModel(
+      teamIds: teams.map((item) => item as String).toList(),
+      competitionIds: competitions.map((item) => item as String).toList(),
+    );
+  }
+}
+
 class UserModel {
   final String id;
   final String? email;
   final String? displayName;
   final List<String> roles;
   final bool isVip;
+  final bool onboardingCompleted;
+  final String timezone;
+  final String theme;
+  final String locale;
 
   UserModel({
     required this.id,
@@ -423,16 +492,25 @@ class UserModel {
     this.displayName,
     required this.roles,
     required this.isVip,
+    this.onboardingCompleted = false,
+    this.timezone = 'Africa/Nairobi',
+    this.theme = 'dark',
+    this.locale = 'en',
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     final rawRoles = json['roles'] as List<dynamic>? ?? [];
+    final profile = json['profile'] as Map<String, dynamic>? ?? {};
     return UserModel(
       id: json['id'] as String,
       email: json['email'] as String?,
       displayName: json['display_name'] as String?,
       roles: rawRoles.map((role) => role as String).toList(),
       isVip: json['is_vip'] as bool? ?? false,
+      onboardingCompleted: profile['onboarding_completed'] as bool? ?? false,
+      timezone: profile['timezone'] as String? ?? 'Africa/Nairobi',
+      theme: profile['theme'] as String? ?? 'dark',
+      locale: profile['locale'] as String? ?? 'en',
     );
   }
 }

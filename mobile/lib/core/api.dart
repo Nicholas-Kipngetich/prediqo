@@ -182,4 +182,47 @@ class FixturesRepository {
       return null;
     }
   }
+
+  Future<UserModel> updateProfile(Map<String, dynamic> changes) async {
+    final response = await _dio.patch<Map<String, dynamic>>(
+      '/api/v1/users/me',
+      data: changes,
+    );
+    return UserModel.fromJson(response.data ?? {});
+  }
+
+  Future<PreferencesModel> fetchPreferences() async {
+    final response = await _dio.get<Map<String, dynamic>>(
+      '/api/v1/notifications/preferences',
+    );
+    return PreferencesModel.fromJson(response.data ?? {});
+  }
+
+  Future<PreferencesModel> updatePreferences(
+    Map<String, dynamic> changes,
+  ) async {
+    final response = await _dio.patch<Map<String, dynamic>>(
+      '/api/v1/notifications/preferences',
+      data: changes,
+    );
+    return PreferencesModel.fromJson(response.data ?? {});
+  }
+
+  Future<FavoritesModel> fetchFavorites() async {
+    final response = await _dio.get<Map<String, dynamic>>(
+      '/api/v1/users/me/favorites',
+    );
+    return FavoritesModel.fromJson(response.data ?? {});
+  }
+
+  Future<FavoritesModel> setFavorites(
+    String kind,
+    List<String> ids,
+  ) async {
+    final response = await _dio.put<Map<String, dynamic>>(
+      '/api/v1/users/me/favorites/$kind',
+      data: {'ids': ids},
+    );
+    return FavoritesModel.fromJson(response.data ?? {});
+  }
 }

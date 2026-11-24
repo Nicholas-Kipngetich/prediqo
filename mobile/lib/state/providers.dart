@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../core/api.dart';
@@ -70,4 +71,16 @@ final performanceProvider = FutureProvider<PerformanceOverview>((ref) async {
 
 final currentUserProvider = FutureProvider<UserModel?>((ref) async {
   return ref.watch(fixturesRepositoryProvider).fetchCurrentUser();
+});
+
+final themeModeProvider = StateProvider<ThemeMode>((ref) {
+  return ThemeMode.dark;
+});
+
+final favoritesProvider = FutureProvider<FavoritesModel>((ref) async {
+  return ref.watch(fixturesRepositoryProvider).fetchFavorites();
+});
+
+final preferencesProvider = FutureProvider<PreferencesModel>((ref) async {
+  return ref.watch(fixturesRepositoryProvider).fetchPreferences();
 });

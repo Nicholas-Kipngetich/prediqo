@@ -32,6 +32,38 @@ async def test_validation_error_envelope(client, auth_headers):
 
 
 @pytest.mark.asyncio
+async def test_favorites_endpoints(client, auth_headers):
+    from app.core.database import get_session_factory
+    from app.services.sync_service import sync_sports_data
+
+    await client.post("/api/v1/auth/verify", headers=auth_headers)
+    async with get_session_factory()() as session:
+        await sync_sports_data(session)
+    fixture = (await client.get("/api/v1/fixtures?page_size=1")).json()["items"][0]
+    team_id = fixture["home_team"]["id"]
+    competition_id = fixture["competition"]["id"]
+
+    response = await client.put(
+        "/api/v1/users/me/favorites/teams",
+        json={"ids": [team_id]},
+        headers=auth_headers,
+    )
+    assert response.status_code == 200
+    assert team_id in response.json()["team_ids"]
+
+    response = await client.put(
+        "/api/v1/users/me/favorites/competitions",
+        json={"ids": [competition_id]},
+        headers=auth_headers,
+    )
+    assert response.status_code == 200
+    assert competition_id in response.json()["competition_ids"]
+
+    listing = await client.get("/api/v1/users/me/favorites", headers=auth_headers)
+    assert listing.json()["team_ids"] == [team_id]
+
+
+@pytest.mark.asyncio
 async def test_soft_delete(client, auth_headers):
     await client.post("/api/v1/auth/verify", headers=auth_headers)
     response = await client.delete("/api/v1/users/me", headers=auth_headers)

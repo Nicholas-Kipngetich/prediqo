@@ -6,6 +6,8 @@ import '../screens/home_screen.dart';
 import '../screens/match_detail_screen.dart';
 import '../screens/matches_screen.dart';
 import '../screens/other_screens.dart';
+import '../screens/onboarding_screen.dart';
+import '../screens/settings_screen.dart';
 import '../screens/splash_screen.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
@@ -15,6 +17,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/splash',
         builder: (context, state) => const SplashScreen(),
+      ),
+      GoRoute(
+        path: '/onboarding',
+        builder: (context, state) => const OnboardingScreen(),
       ),
       GoRoute(
         path: '/auth',
@@ -58,6 +64,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/notifications',
         builder: (context, state) => const NotificationsScreen(),
+      ),
+      GoRoute(
+        path: '/settings',
+        builder: (context, state) => const SettingsScreen(),
       ),
     ],
   );

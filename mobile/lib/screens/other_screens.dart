@@ -178,6 +178,7 @@ class ProfileScreen extends ConsumerWidget {
             'Notifications',
             '/notifications',
           ),
+          _tile(context, Icons.settings_outlined, 'Settings', '/settings'),
           ListTile(
             leading: const Icon(Icons.logout, color: AppColors.textSecondary),
             title: const Text('Sign out'),

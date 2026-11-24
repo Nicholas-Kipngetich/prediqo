@@ -31,6 +31,15 @@ class UserOut(BaseModel):
     profile: ProfileOut | None = None
 
 
+class FavoritesOut(BaseModel):
+    team_ids: list[str] = Field(default_factory=list)
+    competition_ids: list[str] = Field(default_factory=list)
+
+
+class FavoritesIn(BaseModel):
+    ids: list[str] = Field(default_factory=list)
+
+
 class UserUpdateIn(BaseModel):
     display_name: str | None = Field(default=None, max_length=120)
     timezone: str | None = Field(default=None, max_length=64)

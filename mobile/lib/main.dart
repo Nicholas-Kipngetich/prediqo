@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'core/ads.dart';
 import 'core/firebase_options.dart';
 import 'router/app_router.dart';
+import 'state/providers.dart';
 import 'theme/app_theme.dart';
 
 const bool skipFirebase = bool.fromEnvironment(
@@ -47,12 +48,13 @@ class PrediqoApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     ref.watch(adConsentLoadedProvider);
     final router = ref.watch(routerProvider);
+    final themeMode = ref.watch(themeModeProvider);
     return MaterialApp.router(
       title: 'Prediqo',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light(),
       darkTheme: AppTheme.dark(),
-      themeMode: ThemeMode.dark,
+      themeMode: themeMode,
       routerConfig: router,
     );
   }
