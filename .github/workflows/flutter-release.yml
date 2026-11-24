@@ -14,6 +14,16 @@ on:
         type: boolean
         required: false
         default: false
+      skip_firebase:
+        description: Skip Firebase native init (local test builds)
+        type: boolean
+        required: false
+        default: false
+      skip_ads:
+        description: Skip AdMob native init (local test builds)
+        type: boolean
+        required: false
+        default: false
 
 jobs:
   build-appbundle:
@@ -64,13 +74,17 @@ jobs:
         run: |
           flutter build appbundle --release --no-shrink \
             --dart-define=API_BASE_URL=${{ inputs.api_base_url || secrets.API_BASE_URL || 'https://api.prediqo.app' }} \
-            --dart-define=DEV_BYPASS_AUTH=${{ inputs.dev_bypass_auth }}
+            --dart-define=DEV_BYPASS_AUTH=${{ inputs.dev_bypass_auth }} \
+            --dart-define=SKIP_FIREBASE=${{ inputs.skip_firebase }} \
+            --dart-define=SKIP_ADS=${{ inputs.skip_ads }}
 
       - name: Build release APK for device testing
         run: |
           flutter build apk --release --no-shrink \
             --dart-define=API_BASE_URL=${{ inputs.api_base_url || secrets.API_BASE_URL || 'https://api.prediqo.app' }} \
-            --dart-define=DEV_BYPASS_AUTH=${{ inputs.dev_bypass_auth }}
+            --dart-define=DEV_BYPASS_AUTH=${{ inputs.dev_bypass_auth }} \
+            --dart-define=SKIP_FIREBASE=${{ inputs.skip_firebase }} \
+            --dart-define=SKIP_ADS=${{ inputs.skip_ads }}
 
       - name: Upload App Bundle
         uses: actions/upload-artifact@v4

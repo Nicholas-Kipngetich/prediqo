@@ -10,20 +10,32 @@ import 'core/firebase_options.dart';
 import 'router/app_router.dart';
 import 'theme/app_theme.dart';
 
+const bool skipFirebase = bool.fromEnvironment(
+  'SKIP_FIREBASE',
+  defaultValue: false,
+);
+const bool skipAds = bool.fromEnvironment(
+  'SKIP_ADS',
+  defaultValue: false,
+);
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  try {
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
-  } catch (_) {
-    // In local widget tests Firebase is unavailable; API calls fall back to
-    // the development token. Production builds must initialise Firebase.
+  if (!skipFirebase) {
+    try {
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
+    } catch (_) {
+      // Production builds must initialise Firebase with real config.
+    }
   }
-  try {
-    await AdService.instance.initialize();
-  } catch (_) {
-    // Ads are optional; the app works without AdMob available.
+  if (!skipAds) {
+    try {
+      await AdService.instance.initialize();
+    } catch (_) {
+      // Ads are optional; the app works without AdMob available.
+    }
   }
   runApp(const ProviderScope(child: PrediqoApp()));
 }

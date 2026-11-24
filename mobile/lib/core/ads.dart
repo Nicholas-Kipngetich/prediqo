@@ -4,6 +4,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'api.dart';
 
+const bool adsLocallyDisabled = bool.fromEnvironment(
+  'SKIP_ADS',
+  defaultValue: false,
+);
+
 class AdPlacementConfig {
   final String key;
   final String adType;
@@ -101,6 +106,7 @@ class AdService {
     bool consent,
     String key,
   ) {
+    if (adsLocallyDisabled) return false;
     final placement = config.placement(key);
     if (placement == null || !config.enabled || !placement.enabled) {
       return false;

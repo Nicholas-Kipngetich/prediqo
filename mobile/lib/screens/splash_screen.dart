@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../core/ads.dart';
+import '../core/ads.dart' show AdService, adsLocallyDisabled;
 import '../core/auth_service.dart';
 import '../state/providers.dart';
 import '../theme/app_theme.dart';
@@ -47,15 +47,17 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
     } catch (_) {
       // Firebase or API unavailable in local tests.
     }
-    try {
-      final config = await ref.read(adsConfigProvider.future);
-      await AdService.instance.showAppOpen(
-        config,
-        isVip,
-        ref.read(adConsentProvider),
-      );
-    } catch (_) {
-      // Ads are optional.
+    if (!adsLocallyDisabled) {
+      try {
+        final config = await ref.read(adsConfigProvider.future);
+        await AdService.instance.showAppOpen(
+          config,
+          isVip,
+          ref.read(adConsentProvider),
+        );
+      } catch (_) {
+        // Ads are optional.
+      }
     }
     if (!mounted) return;
     context.go(devBypassAuth || signedIn ? '/home' : '/auth');
