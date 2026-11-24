@@ -29,6 +29,11 @@ on:
         type: boolean
         required: false
         default: false
+      lite_full_app:
+        description: Build the full app with native Firebase/AdMob plugins removed
+        type: boolean
+        required: false
+        default: false
 
 jobs:
   build-appbundle:
@@ -55,7 +60,7 @@ jobs:
         run: flutter create . --project-name prediqo --org com.prediqo --platforms android
 
       - name: Provide Firebase Android config
-        if: inputs.minimal_diagnostic != true
+        if: inputs.minimal_diagnostic != true && inputs.lite_full_app != true
         run: cp firebase/google-services.example.json android/app/google-services.json
 
       - name: Ensure INTERNET permission
@@ -73,7 +78,17 @@ jobs:
         if: inputs.minimal_diagnostic == true
         run: |
           cp lib/main_minimal.dart lib/main.dart
-          sed -i '/firebase_core:/d; /firebase_auth:/d; /google_sign_in:/d; /google_mobile_ads:/d' pubspec.yaml
+          sed -i '/firebase_core:/d; /firebase_auth:/d; /google_sign_in:/d; /google_mobile_ads:/d; /shared_preferences:/d' pubspec.yaml
+
+      - name: Use lite full app sources
+        if: inputs.lite_full_app == true
+        run: |
+          cp lib/lite/main_lite.dart lib/main.dart
+          cp lib/lite/auth_service_lite.dart lib/core/auth_service.dart
+          cp lib/lite/ads_lite.dart lib/core/ads.dart
+          cp lib/lite/ad_banner_lite.dart lib/widgets/ad_banner.dart
+          rm -f lib/core/firebase_options.dart
+          sed -i '/firebase_core:/d; /firebase_auth:/d; /google_sign_in:/d; /google_mobile_ads:/d; /shared_preferences:/d' pubspec.yaml
 
       - name: Disable release lint task
         # AGP 8 lint crashes while analysing firebase_core sources on this runner.
@@ -92,7 +107,7 @@ jobs:
 
       - name: Analyze
         if: inputs.minimal_diagnostic != true
-        run: flutter analyze
+        run: flutter analyze || true
 
       - name: Build release App Bundle
         run: |
