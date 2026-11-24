@@ -407,7 +407,6 @@ class PredictionModel {
     final raw = json['probabilities_bp'] as Map<String, dynamic>? ?? {};
     final kickoff = json['kickoff_utc'];
     final published = json['published_at'];
-    final settled = json['settled_at'];
     return PredictionModel(
       id: json['id'] as String,
       fixtureId: json['fixture_id'] as String,
