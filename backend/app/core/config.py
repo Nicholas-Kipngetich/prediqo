@@ -50,6 +50,12 @@ class Settings(BaseSettings):
     token_unlock_cost: int = 5
     free_daily_analysis: int = 1
     free_daily_predictions: int = 3
+    smtp_host: str = ""
+    smtp_port: int = 587
+    smtp_username: str = ""
+    smtp_password: str = ""
+    smtp_from: str = "no-reply@prediqo.app"
+    smtp_use_tls: bool = True
     vip_daily_analysis: int = 100
 
     @property

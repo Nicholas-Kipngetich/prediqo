@@ -18,6 +18,7 @@ from app.core.config import settings
 from app.core.errors import ConflictError, UnauthorizedError
 from app.models.dev_credentials import DevCredential
 from app.models.identity import Role, RoleCode, User, UserStatus
+from app.services.mail_service import send_verification_code
 from app.services.user_service import ensure_seed_roles
 
 TOKEN_PREFIX = "devauth."
@@ -132,6 +133,8 @@ async def register(
         )
     )
     await session.commit()
+    if email:
+        send_verification_code(email.strip().lower(), code)
     return user, code
 
 
@@ -190,6 +193,8 @@ async def resend_code(session: AsyncSession, email: str | None, phone: str | Non
         minutes=settings.dev_verification_code_ttl_minutes
     )
     await session.commit()
+    if email:
+        send_verification_code(email.strip().lower(), code)
     return code
 
 

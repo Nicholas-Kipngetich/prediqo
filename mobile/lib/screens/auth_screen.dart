@@ -170,7 +170,8 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                   const SizedBox(height: 8),
                   Text(
                     _awaitingCode
-                        ? 'Verify your account'
+                        ? 'We sent a verification code to your '
+                            '${_useEmail ? 'email' : 'phone'}'
                         : _register
                             ? 'Create your account'
                             : 'Welcome back',
