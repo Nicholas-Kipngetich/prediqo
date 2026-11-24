@@ -15,20 +15,20 @@ from app.models.ads import AdPlacement, SystemConfig
 TEST_PLACEMENTS = [
     ("app_open", "App open", "APP_OPEN", "ca-app-pub-3940256099942544/9235187345", True),
     ("banner_home", "Home banner", "BANNER", "ca-app-pub-3940256099942544/6300978111", True),
-    ("native_feed", "Native feed", "NATIVE", "ca-app-pub-3940256099942544/3130260592", False),
+    ("native_feed", "Native feed", "NATIVE", "ca-app-pub-3940256099942544/3130260592", True),
     (
         "interstitial_navigation",
         "Navigation interstitial",
         "INTERSTITIAL",
         "ca-app-pub-3940256099942544/1033173712",
-        False,
+        True,
     ),
     (
         "rewarded_unlock",
         "Rewarded unlock",
         "REWARDED",
         "ca-app-pub-3940256099942544/6498350057",
-        False,
+        True,
     ),
 ]
 CLIENT_CONFIG_KEYS = {

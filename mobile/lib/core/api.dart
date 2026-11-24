@@ -124,6 +124,16 @@ class FixturesRepository {
     return TokenBalanceModel.fromJson(response.data ?? {});
   }
 
+  Future<List<TokenTransactionModel>> fetchTokenTransactions() async {
+    final response = await _dio.get<List<dynamic>>(
+      '/api/v1/tokens/transactions',
+    );
+    final raw = response.data ?? [];
+    return raw
+        .map((item) => TokenTransactionModel.fromJson(item as Map<String, dynamic>))
+        .toList();
+  }
+
   Future<List<TokenPackageModel>> fetchTokenPackages() async {
     final response = await _dio.get<List<dynamic>>('/api/v1/tokens/packages');
     final raw = response.data ?? [];

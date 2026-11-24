@@ -283,6 +283,35 @@ class TokenBalanceModel {
   }
 }
 
+class TokenTransactionModel {
+  final String id;
+  final String type;
+  final int amount;
+  final int balanceAfter;
+  final String reason;
+  final DateTime createdAt;
+
+  TokenTransactionModel({
+    required this.id,
+    required this.type,
+    required this.amount,
+    required this.balanceAfter,
+    required this.reason,
+    required this.createdAt,
+  });
+
+  factory TokenTransactionModel.fromJson(Map<String, dynamic> json) {
+    return TokenTransactionModel(
+      id: json['id'] as String,
+      type: json['type'] as String,
+      amount: (json['amount'] as num?)?.toInt() ?? 0,
+      balanceAfter: (json['balance_after'] as num?)?.toInt() ?? 0,
+      reason: json['reason'] as String? ?? '',
+      createdAt: DateTime.parse(json['created_at'] as String),
+    );
+  }
+}
+
 class PlanModel {
   final String id;
   final String code;

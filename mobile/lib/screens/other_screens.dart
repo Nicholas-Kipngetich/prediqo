@@ -339,6 +339,7 @@ class TokenStoreScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final balance = ref.watch(tokenBalanceProvider);
     final packages = ref.watch(tokenPackagesProvider);
+    final transactions = ref.watch(tokenTransactionsProvider);
 
     return AppScaffold(
       title: 'Token Store',
@@ -387,6 +388,41 @@ class TokenStoreScreen extends ConsumerWidget {
                   )
                   .toList(),
             ),
+            loading: () => const LoadingState(),
+            error: (error, _) => Text('Error: $error'),
+          ),
+          const SectionHeader(title: 'Transaction history'),
+          transactions.when(
+            data: (items) {
+              if (items.isEmpty) {
+                return const EmptyState(
+                  title: 'No transactions yet',
+                  message: 'Token credits and debits will appear here.',
+                  icon: Icons.receipt_long_outlined,
+                );
+              }
+              return Column(
+                children: items
+                    .map(
+                      (item) => Card(
+                        child: ListTile(
+                          title: Text(item.reason),
+                          subtitle: Text(item.createdAt.toLocal().toString()),
+                          trailing: Text(
+                            '${item.amount > 0 ? '+' : ''}${item.amount}',
+                            style: TextStyle(
+                              color: item.amount > 0
+                                  ? AppColors.primary
+                                  : AppColors.warning,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                    )
+                    .toList(),
+              );
+            },
             loading: () => const LoadingState(),
             error: (error, _) => Text('Error: $error'),
           ),

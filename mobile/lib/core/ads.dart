@@ -132,4 +132,43 @@ class AdService {
       ),
     );
   }
+
+  Future<void> showInterstitial(
+    AdsConfig config,
+    bool isVip,
+    bool consent,
+  ) async {
+    if (!canShow(config, isVip, consent, 'interstitial_navigation')) return;
+    final placement = config.placement('interstitial_navigation')!;
+    await InterstitialAd.load(
+      adUnitId: placement.unitId,
+      request: AdRequest(),
+      adLoadCallback: InterstitialAdLoadCallback(
+        onAdLoaded: (ad) => ad.show(),
+        onAdFailedToLoad: (error) {},
+      ),
+    );
+  }
+
+  Future<void> showRewarded(
+    AdsConfig config,
+    bool isVip,
+    bool consent, {
+    required void Function() onRewarded,
+  }) async {
+    if (!canShow(config, isVip, consent, 'rewarded_unlock')) return;
+    final placement = config.placement('rewarded_unlock')!;
+    await RewardedAd.load(
+      adUnitId: placement.unitId,
+      request: AdRequest(),
+      rewardedAdLoadCallback: RewardedAdLoadCallback(
+        onAdLoaded: (ad) {
+          ad.show(
+            onUserEarnedReward: (_, __) => onRewarded(),
+          );
+        },
+        onAdFailedToLoad: (error) {},
+      ),
+    );
+  }
 }

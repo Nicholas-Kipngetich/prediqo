@@ -49,6 +49,7 @@ class Settings(BaseSettings):
     google_play_service_account_json: str = ""
     token_unlock_cost: int = 5
     free_daily_analysis: int = 1
+    free_daily_predictions: int = 3
     vip_daily_analysis: int = 100
 
     @property
