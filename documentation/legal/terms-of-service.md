@@ -1,66 +1,108 @@
-# Prediqo Terms of Service (draft for legal review)
+# Terms of Service — Prediqo
 
-**Effective date:** [to be set before publication]
-**Operator:** [legal entity name and address to be supplied]
+**Last updated:** November 2026
+
+## 1. Acceptance of Terms
+
+By downloading, installing, or using Prediqo ("App"), you agree to these Terms of
+Service. If you do not agree, do not use the App.
+
+## 2. Description of Service
+
+Prediqo is an informational sports analytics platform that provides:
+- Football fixture data and statistics
+- AI-powered match predictions and probabilities
+- Team form analysis and trends
+- Token-based access to premium reports
+- VIP subscription for expanded access
+
+Prediqo is **not a bookmaker or betting service**. No wagering, deposits,
+withdrawals, betting wallets, payouts, or bookmaker account management are
+provided.
+
+## 3. User Accounts
+
+- You must be at least **18 years of age** to use Prediqo
+- You are responsible for maintaining the security of your account credentials
+- You must not share your account with others
+- You may delete your account at any time via Settings → Delete Account
+
+## 4. Tokens and VIP Subscriptions
+
+### 4.1 Tokens
+- Tokens are virtual credits used to unlock premium reports
+- Tokens are purchased via Google Play Billing
+- Tokens are non-refundable once used
+- Unused tokens remain in your account
+
+### 4.2 VIP Subscriptions
+- VIP provides expanded access to predictions and analysis
+- Subscriptions are billed via Google Play Billing
+- Subscriptions auto-renew unless cancelled
+- Cancellation takes effect at the end of the current billing period
+- Refunds are handled by Google Play per their policy
+
+## 5. Predictions and Analytics
+
+- Predictions are **estimates** based on statistical models
+- Predictions are **not guarantees** of outcomes
+- Prediqo is not liable for any decisions made based on predictions
+- Model accuracy is published transparently (see Performance Centre)
+- Sample/demo data may be used during development
+
+## 6. Advertising
+
+- Prediqo displays advertisements via Google AdMob
+- Ad consent can be managed in Settings
+- VIP users may see fewer or no ads depending on configuration
+- Ads are clearly labeled and do not interfere with core functionality
+
+## 7. Prohibited Uses
+
+You must not:
+- Use the App for illegal purposes
+- Attempt to reverse-engineer or hack the App
+- Share, redistribute, or resell predictions or data
+- Create multiple accounts to abuse free tiers
+- Use automated tools to scrape data
+- Interfere with the App's operation or security
+
+## 8. Intellectual Property
+
+- Prediqo and its content are protected by copyright and intellectual property laws
+- You may not copy, modify, or distribute Prediqo's content without permission
+- User-generated content (if any) remains your property but you grant Prediqo a license to use it
+
+## 9. Disclaimer of Warranties
+
+Prediqo is provided "as is" without warranties of any kind. We do not guarantee:
+- Accuracy of predictions or analytics
+- Uninterrupted service availability
+- Compatibility with all devices
+
+## 10. Limitation of Liability
+
+Prediqo is not liable for:
+- Losses resulting from use of predictions or analytics
+- Indirect, incidental, or consequential damages
+- Service interruptions or data loss
+
+## 11. Governing Law
+
+These Terms are governed by the laws of Kenya. Disputes will be resolved in
+Kenyan courts.
+
+## 12. Changes to Terms
+
+We may update these Terms periodically. Changes will be posted in the App.
+Continued use after changes constitutes acceptance.
+
+## 13. Contact
+
+For questions about these Terms:
+- Email: support@prediqo.app
+- Website: https://prediqo.app
 
 ---
 
-## 1. Nature of the service
-
-Prediqo provides informational football statistics, analysis and probability estimates.
-It is **not** a bookmaker, betting service or financial adviser. It does not accept
-wagers, deposits or payouts, and does not facilitate gambling.
-
-## 2. Eligibility
-
-You must be at least 16 years old and legally able to enter these terms.
-
-## 3. Accounts
-
-You are responsible for your account credentials and for activity under your account.
-You may delete your account in the app; see the Account Deletion documentation.
-
-## 4. Predictions and accuracy
-
-Predictions are statistical estimates produced by evaluated models. They are not
-guarantees. Probabilities may be wrong, and published predictions are never deleted or
-silently altered. Past accuracy does not imply future results and is not financial advice.
-
-## 5. Free, tokens and VIP
-
-- Free access includes a configurable daily selection of predictions and basic analysis.
-- Tokens are virtual credits used to unlock individual premium reports. Token
-  transactions are recorded in an immutable ledger.
-- VIP subscriptions provide expanded access, subject to the entitlements shown in the
-  app. VIP access takes priority over token charges; you are never charged twice for the
-  same feature.
-- All digital purchases are processed by Google Play and verified by our backend.
-
-## 6. Refunds
-
-Refund requests are handled under Google Play's refund policy. Approved refunds are
-recorded as compensating ledger entries; entitlement is revoked where applicable.
-
-## 7. Acceptable use
-
-You may not scrape the service, attempt to bypass entitlements, interfere with its
-operation, or use it for unlawful purposes, including gambling promotion.
-
-## 8. Availability and changes
-
-We may change or suspend features for maintenance, security or legal reasons. We aim to
-give reasonable notice but do not guarantee uninterrupted availability.
-
-## 9. Liability
-
-To the maximum extent permitted by law, Prediqo is not liable for indirect or
-consequential losses, or for decisions made solely on the basis of a prediction.
-
-## 10. Contact
-
-[support email to be supplied]
-
----
-
-This draft must be reviewed by qualified legal counsel and published at a public HTTPS
-URL before the app is submitted to Google Play.
+*This is a draft document. Review with legal counsel before publication.*
