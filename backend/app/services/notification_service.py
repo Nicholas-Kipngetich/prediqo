@@ -109,7 +109,18 @@ async def deliver_notification(session: AsyncSession, notification: Notification
         from firebase_admin import messaging
 
         if not firebase_admin._apps:
-            firebase_admin.initialize_app()
+            if settings.firebase_credentials_path:
+                import os
+
+                if os.path.exists(settings.firebase_credentials_path):
+                    cred = firebase_admin.credentials.Certificate(
+                        settings.firebase_credentials_path
+                    )
+                    firebase_admin.initialize_app(cred)
+                else:
+                    firebase_admin.initialize_app()
+            else:
+                firebase_admin.initialize_app()
         message = messaging.MulticastMessage(
             notification=messaging.Notification(title=notification.title, body=notification.body),
             data={"type": notification.type, "deep_link": notification.deep_link or ""},
@@ -123,7 +134,10 @@ async def deliver_notification(session: AsyncSession, notification: Notification
         await asyncio.to_thread(_send)
         notification.status = "SENT"
         notification.sent_at = datetime.now(UTC)
-    except Exception:
+    except Exception as exc:
+        import logging
+
+        logging.getLogger(__name__).warning("FCM delivery failed: %s", exc)
         notification.status = "FAILED"
     await session.flush()
 

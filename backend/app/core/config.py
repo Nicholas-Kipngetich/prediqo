@@ -34,6 +34,7 @@ class Settings(BaseSettings):
     auth_mode: str = "firebase"
     secret_key: str = "dev-secret-change-me"
     firebase_project_id: str = ""
+    firebase_credentials_path: str = ""
     dev_auth_token: str = "prediqo-dev-token"
     dev_verification_code_ttl_minutes: int = 10
     database_url: str | None = None  # override for tests (e.g. in-memory SQLite)
