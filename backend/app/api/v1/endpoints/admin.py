@@ -11,7 +11,7 @@ from app.api.deps import require_admin
 from app.core.database import get_session
 from app.core.errors import NotFoundError
 from app.models.identity import Role, User, UserStatus
-from app.models.monetization import AuditLog, SubscriptionPlan, TokenPackage
+from app.models.monetization import AuditLog, Subscription, SubscriptionPlan, TokenPackage
 from app.models.predictions import ModelVersion, Prediction, PredictionMarket
 from app.models.sports import SyncJob
 from app.schemas.sports import SyncResultOut
@@ -131,6 +131,45 @@ async def admin_delete_user(
     await log_action(session, "ADMIN_DELETE_USER", admin.id, "user", str(user.id))
     await session.commit()
     return {"status": "ok"}
+
+
+class PredictionOverrideIn(BaseModel):
+    status: str | None = None
+    selected_outcome: str | None = None
+
+
+@router.patch("/predictions/{prediction_id}")
+async def admin_override_prediction(
+    prediction_id: UUID,
+    payload: PredictionOverrideIn,
+    admin: User = Depends(require_admin),
+    session: AsyncSession = Depends(get_session),
+) -> dict:
+    prediction = await session.get(Prediction, prediction_id)
+    if prediction is None:
+        raise NotFoundError("Prediction not found.")
+    changes = {}
+    if payload.status is not None:
+        prediction.status = payload.status.upper()
+        changes["status"] = prediction.status
+    if payload.selected_outcome is not None:
+        prediction.selected_outcome = payload.selected_outcome
+        changes["selected_outcome"] = prediction.selected_outcome
+    await session.flush()
+    await log_action(
+        session,
+        "ADMIN_OVERRIDE_PREDICTION",
+        admin.id,
+        "prediction",
+        str(prediction.id),
+        changes,
+    )
+    await session.commit()
+    return {
+        "id": str(prediction.id),
+        "status": prediction.status,
+        "selected_outcome": prediction.selected_outcome,
+    }
 
 
 @router.post("/sync/trigger", response_model=SyncResultOut)
@@ -279,6 +318,43 @@ async def admin_system_health(
         "users": users,
         "predictions": predictions,
         "sync_jobs": jobs,
+    }
+
+
+@router.get("/revenue")
+async def admin_revenue(
+    admin: User = Depends(require_admin),
+    session: AsyncSession = Depends(get_session),
+) -> dict:
+    from app.models.monetization import TokenTransaction, TransactionType
+
+    token_credits = (
+        await session.execute(
+            select(func.coalesce(func.sum(TokenTransaction.amount), 0)).where(
+                TokenTransaction.type == TransactionType.CREDIT
+            )
+        )
+    ).scalar_one()
+    token_debits = (
+        await session.execute(
+            select(func.coalesce(func.sum(TokenTransaction.amount), 0)).where(
+                TokenTransaction.type == TransactionType.DEBIT
+            )
+        )
+    ).scalar_one()
+    total_users = (await session.execute(select(func.count()).select_from(User))).scalar_one()
+    active_subscriptions = (
+        await session.execute(
+            select(func.count())
+            .select_from(Subscription)
+            .where(Subscription.status.in_(["ACTIVE", "GRACE"]))
+        )
+    ).scalar_one()
+    return {
+        "token_credits_total": int(token_credits),
+        "token_debits_total": int(token_debits),
+        "total_users": total_users,
+        "active_subscriptions": active_subscriptions,
     }
 
 
