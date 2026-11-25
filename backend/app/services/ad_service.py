@@ -13,21 +13,21 @@ from app.core.errors import NotFoundError
 from app.models.ads import AdPlacement, SystemConfig
 
 TEST_PLACEMENTS = [
-    ("app_open", "App open", "APP_OPEN", "ca-app-pub-3940256099942544/9235187345", True),
-    ("banner_home", "Home banner", "BANNER", "ca-app-pub-3940256099942544/6300978111", True),
-    ("native_feed", "Native feed", "NATIVE", "ca-app-pub-3940256099942544/3130260592", True),
+    ("app_open", "App open", "APP_OPEN", "ca-app-pub-1126639576417784/5897478798", True),
+    ("banner_home", "Home banner", "BANNER", "ca-app-pub-1126639576417784/6643457948", True),
+    ("native_feed", "Native feed", "NATIVE", "ca-app-pub-1126639576417784/2745205448", True),
     (
         "interstitial_navigation",
         "Navigation interstitial",
         "INTERSTITIAL",
-        "ca-app-pub-3940256099942544/1033173712",
+        "ca-app-pub-1126639576417784/7301933490",
         True,
     ),
     (
         "rewarded_unlock",
         "Rewarded unlock",
         "REWARDED",
-        "ca-app-pub-3940256099942544/6498350057",
+        "ca-app-pub-1126639576417784/8167971803",
         True,
     ),
 ]
@@ -57,7 +57,7 @@ async def ensure_seed(session: AsyncSession) -> None:
     defaults = {
         "ads_enabled": True,
         "ads_policy_reviewed": True,
-        "admob_app_id_android": "ca-app-pub-3940256099942544~3347511713",
+        "admob_app_id_android": "ca-app-pub-1126639576417784~8358709345",
     }
     for key, value in defaults.items():
         if key not in configs:
