@@ -61,7 +61,7 @@ jobs:
 
       - name: Provide Firebase Android config
         if: inputs.minimal_diagnostic != true
-        run: cp mobile/android/app/google-services.json android/app/google-services.json
+        run: cp android/app/google-services.json android/app/google-services.json
 
       - name: Ensure INTERNET permission
         run: |
