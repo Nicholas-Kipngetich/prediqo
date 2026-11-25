@@ -1,5 +1,7 @@
 """Administration endpoints (foundation for Phase 2 and Phase 9)."""
 
+from uuid import UUID
+
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 from sqlalchemy import func, select
@@ -7,7 +9,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import require_admin
 from app.core.database import get_session
-from app.models.identity import Role, User
+from app.core.errors import NotFoundError
+from app.models.identity import Role, User, UserStatus
 from app.models.monetization import AuditLog, SubscriptionPlan, TokenPackage
 from app.models.predictions import ModelVersion, Prediction, PredictionMarket
 from app.models.sports import SyncJob
@@ -45,6 +48,89 @@ async def list_users(
             await session.refresh(role, attribute_names=["permissions"])
         result.append(user_to_out(user))
     return result
+
+
+@router.get("/users/{user_id}", response_model=UserOut)
+async def get_user(
+    user_id: UUID,
+    admin: User = Depends(require_admin),
+    session: AsyncSession = Depends(get_session),
+) -> UserOut:
+    user = await session.get(User, user_id)
+    if user is None:
+        raise NotFoundError("User not found.")
+    await session.refresh(user, attribute_names=["profile", "roles"])
+    for role in user.roles:
+        await session.refresh(role, attribute_names=["permissions"])
+    return user_to_out(user)
+
+
+@router.post("/users/{user_id}/suspend", response_model=UserOut)
+async def suspend_user(
+    user_id: UUID,
+    admin: User = Depends(require_admin),
+    session: AsyncSession = Depends(get_session),
+) -> UserOut:
+    user = await session.get(User, user_id)
+    if user is None:
+        raise NotFoundError("User not found.")
+    user.status = UserStatus.SUSPENDED
+    await session.flush()
+    await log_action(
+        session,
+        "ADMIN_SUSPEND_USER",
+        admin.id,
+        "user",
+        str(user.id),
+        {"status": user.status},
+    )
+    await session.commit()
+    await session.refresh(user, attribute_names=["profile", "roles"])
+    for role in user.roles:
+        await session.refresh(role, attribute_names=["permissions"])
+    return user_to_out(user)
+
+
+@router.post("/users/{user_id}/unsuspend", response_model=UserOut)
+async def unsuspend_user(
+    user_id: UUID,
+    admin: User = Depends(require_admin),
+    session: AsyncSession = Depends(get_session),
+) -> UserOut:
+    user = await session.get(User, user_id)
+    if user is None:
+        raise NotFoundError("User not found.")
+    user.status = UserStatus.ACTIVE
+    await session.flush()
+    await log_action(
+        session,
+        "ADMIN_UNSUSPEND_USER",
+        admin.id,
+        "user",
+        str(user.id),
+        {"status": user.status},
+    )
+    await session.commit()
+    await session.refresh(user, attribute_names=["profile", "roles"])
+    for role in user.roles:
+        await session.refresh(role, attribute_names=["permissions"])
+    return user_to_out(user)
+
+
+@router.delete("/users/{user_id}")
+async def admin_delete_user(
+    user_id: UUID,
+    admin: User = Depends(require_admin),
+    session: AsyncSession = Depends(get_session),
+) -> dict:
+    user = await session.get(User, user_id)
+    if user is None:
+        raise NotFoundError("User not found.")
+    await session.delete(user)
+    await session.flush()
+    await log_action(session, "ADMIN_DELETE_USER", admin.id, "user", str(user.id))
+    await session.commit()
+    return {"status": "ok"}
 
 
 @router.post("/sync/trigger", response_model=SyncResultOut)

@@ -14,7 +14,13 @@ async def test_client_config_exposes_enabled_test_placements(client):
     assert data["ads_enabled"] is True
     assert len(data["placements"]) == 5
     enabled = {item["key"] for item in data["placements"] if item["enabled"]}
-    assert enabled == {"app_open", "banner_home"}
+    assert enabled == {
+        "app_open",
+        "banner_home",
+        "native_feed",
+        "interstitial_navigation",
+        "rewarded_unlock",
+    }
     banner = next(item for item in data["placements"] if item["key"] == "banner_home")
     assert banner["unit_id"].startswith("ca-app-pub-")
     assert banner["vip_excluded"] is True
