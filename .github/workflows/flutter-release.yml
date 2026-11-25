@@ -124,14 +124,14 @@ jobs:
             --dart-define=SKIP_ADS=${{ inputs.skip_ads }}
 
       - name: Upload App Bundle
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: prediqo-appbundle
           path: mobile/build/app/outputs/bundle/release/app-release.aab
           if-no-files-found: error
 
       - name: Upload installable APK
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: prediqo-apk
           path: mobile/build/app/outputs/flutter-apk/app-release.apk
