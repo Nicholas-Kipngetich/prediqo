@@ -60,8 +60,8 @@ jobs:
         run: flutter create . --project-name prediqo --org com.prediqo --platforms android
 
       - name: Provide Firebase Android config
-        if: inputs.minimal_diagnostic != true
-        run: cp android/app/google-services.json android/app/google-services.json
+        if: inputs.minimal_diagnostic != true && inputs.lite_full_app != true
+        run: cp firebase/google-services.example.json android/app/google-services.json
 
       - name: Ensure INTERNET permission
         run: |
