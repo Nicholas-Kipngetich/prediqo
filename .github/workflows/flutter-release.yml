@@ -60,8 +60,8 @@ jobs:
         run: flutter create . --project-name prediqo --org com.prediqo --platforms android
 
       - name: Provide Firebase Android config
-        if: inputs.minimal_diagnostic != true && inputs.lite_full_app != true
-        run: cp firebase/google-services.example.json android/app/google-services.json
+        if: inputs.minimal_diagnostic != true
+        run: cp mobile/android/app/google-services.json android/app/google-services.json
 
       - name: Ensure INTERNET permission
         run: |
@@ -87,8 +87,6 @@ jobs:
           cp lib/lite/auth_service_lite.dart lib/core/auth_service.dart
           cp lib/lite/ads_lite.dart lib/core/ads.dart
           cp lib/lite/ad_banner_lite.dart lib/widgets/ad_banner.dart
-          rm -f lib/core/firebase_options.dart
-          sed -i '/firebase_core:/d; /firebase_auth:/d; /google_sign_in:/d; /google_mobile_ads:/d' pubspec.yaml
 
       - name: Disable release lint task
         # AGP 8 lint crashes while analysing firebase_core sources on this runner.

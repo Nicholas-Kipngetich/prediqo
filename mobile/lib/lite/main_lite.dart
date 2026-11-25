@@ -1,4 +1,5 @@
 // ignore: deprecated_member_use
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -10,6 +11,7 @@ import '../theme/app_theme.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   await AdService.instance.initialize();
   final auth = AuthService();
   await auth.init();
