@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "295910631373",
+    "project_id": "prediqo-1035a",
+    "storage_bucket": "prediqo-1035a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:295910631373:android:7a522e8b1498e90a858684",
+        "android_client_info": {
+          "package_name": "com.prediqo.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBXrxSB7V_WTpcx0iXhloDD85zFC7dzB9Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
